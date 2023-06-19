@@ -56,7 +56,7 @@ export default class BaseApi {
 
         if (accessTokenRequired) {
             // Get access token from secure storage
-            const accessToken = await localStorage.getItem(this.accessTokenId)
+            const accessToken = localStorage.getItem(this.accessTokenId)
             if (accessToken == null) {
                 throw new Error('Access token not found')
             }
@@ -66,43 +66,30 @@ export default class BaseApi {
         return headers
     }
 
-    async get<ResponseType>(
-        url: string,
-        requestConfig?: RequestConfig
-    ): Promise<ResponseType> {
-        return await this.sendRequestBase(url, HttpMethod.GET, requestConfig)
+    async get(url: string, requestConfig?: RequestConfig): Promise<Response> {
+        return this.sendRequestBase(url, HttpMethod.GET, requestConfig)
     }
 
-    async post<RequestType, ResponseType>(
+    async post<RequestType>(
         url: string,
         body: RequestType,
         requestConfig?: RequestConfig
-    ): Promise<ResponseType> {
-        return await this.sendRequestBase(
-            url,
-            HttpMethod.POST,
-            requestConfig,
-            body
-        )
+    ): Promise<Response> {
+        return this.sendRequestBase(url, HttpMethod.POST, requestConfig, body)
     }
 
-    async put<RequestType, ResponseType>(
+    async put<RequestType>(
         url: string,
         body: RequestType,
         requestConfig?: RequestConfig
-    ): Promise<ResponseType> {
-        return await this.sendRequestBase(
-            url,
-            HttpMethod.PUT,
-            requestConfig,
-            body
-        )
+    ): Promise<Response> {
+        return this.sendRequestBase(url, HttpMethod.PUT, requestConfig, body)
     }
 
-    async delete<ResponseType>(
+    async delete(
         url: string,
         requestConfig?: RequestConfig
-    ): Promise<ResponseType> {
+    ): Promise<Response> {
         return await this.sendRequestBase(url, HttpMethod.DELETE, requestConfig)
     }
 
@@ -111,7 +98,7 @@ export default class BaseApi {
         method: string,
         requestConfig: Undefinable<RequestConfig> = this.getDefaultConfig(),
         body?: any
-    ): Promise<any> {
+    ): Promise<Response> {
         const headers = await this.getHeaders(
             requestConfig.authorizationRequired
         )
@@ -134,12 +121,12 @@ export default class BaseApi {
         const response = await fetch(`${this.apiURL}${url}`, {
             method,
             headers,
-            body: JSON.stringify(body),
+            body,
             signal: controller.signal,
         })
 
         clearTimeout(timeoutId)
 
-        return await response.json()
+        return response
     }
 }
