@@ -3,7 +3,7 @@ import {
     AUTH_PASSWORD_TOO_SHORT,
     COMMON_EMPTY_FIELD_NOT_ALLOWED,
 } from '@/common/strings'
-import ErrText from '@/components/common/ErrText'
+import ErrText from '@/common/components/ErrText'
 import { snowflakeCursor } from '@/utils/fun/SnowFlake'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
