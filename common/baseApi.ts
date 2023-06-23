@@ -39,12 +39,12 @@ export const useFetch = (config: RequestConfig) => {
     ): Promise<Headers> => {
         const headers = new Headers()
         headers.append('Content-Type', 'application/json')
-        // headers.append('Accept', '*/*')
-        // headers.append('Access-Control-Allow-Origin', "http://localhost:3000")
-        // headers.append(
-        //     'Access-Control-Allow-Headers',
-        //     'Origin, X-Requested-With, Content-Type, Accept, Authorization'
-        // )
+        headers.append('Accept', 'application/json')
+        headers.append('Access-Control-Allow-Origin', 'http://localhost:3000')
+        headers.append(
+            'Access-Control-Allow-Headers',
+            'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+        )
 
         if (accessTokenRequired) {
             // Get access token from secure storage
@@ -66,7 +66,9 @@ export const useFetch = (config: RequestConfig) => {
             router.push('/auth/signin')
             return
         }
-        // router.push('/errors')
+
+        // Redirect to errors page if cannot resolve
+        router.push('/errors')
     }
 
     const sendBaseRequest = async (
