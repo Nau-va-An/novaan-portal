@@ -12,7 +12,6 @@ import {
     TableHead,
     TableRow,
 } from '@mui/material'
-import Link from 'next/link'
 
 const SubmissionsView = () => {
     const router = useRouter()
