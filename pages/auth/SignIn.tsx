@@ -9,6 +9,7 @@ import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Toaster, toast } from 'react-hot-toast'
+import { signIn, useSignIn } from './services/auth.service'
 
 type SignInData = {
     username: string
@@ -29,18 +30,23 @@ const SignIn = () => {
         },
         mode: 'all',
     })
+    const { token, signInWithPayload } = useSignIn()
 
     useEffect(() => {
         // Enable to see something funny
         // snowflakeCursor();
     }, [])
 
+    useEffect(() => {
+        if (token == null || token === '') {
+            return
+        }
+        localStorage.setItem('AccessToken', token)
+        router.push('/submissions/pending')
+    }, [token, router])
+
     const notifyErr = (message: string): void => {
         toast.error(message)
-    }
-
-    const redirectToSubmissions = () => {
-        router.push('/submissions/pending')
     }
 
     const onSignIn = async (data: SignInData): Promise<void> => {
@@ -50,18 +56,7 @@ const SignIn = () => {
                 usernameOrEmail: data.username,
                 password: data.password,
             }
-            const response = await fetch('/api/auth/signin', {
-                method: 'POST',
-                body: JSON.stringify(payload),
-            })
-            const result = await response.json()
-            if (!response.ok) {
-                notifyErr(`Error Code: ${result.errCode}`)
-                return
-            }
-
-            localStorage.setItem(process.env.AT_ID, result.token)
-            redirectToSubmissions()
+            await signInWithPayload(payload)
         } catch (err) {
             notifyErr(err.message)
         } finally {

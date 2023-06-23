@@ -29,6 +29,7 @@ export interface Ingredient {
 }
 
 export interface Recipe {
+    id: string
     creatorId: string
     title: string
     description: string
@@ -38,15 +39,21 @@ export interface Recipe {
     portionType: PortionType
     prepTime: string
     cookTime: string
-    instruction: Instruction[]
+    instructions: Instruction[]
     ingredients: Ingredient[]
     status: Status
 }
 
-export interface Post {
+export interface CulinaryTips {
+    id: string
     creatorId: string
     title: string
     description: string
     video: string
     status: Status
+}
+
+export enum SubmissionType {
+    Recipe = 'Recipe',
+    Tips = 'Tips and Tricks',
 }
