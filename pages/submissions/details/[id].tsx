@@ -136,7 +136,7 @@ const SubmissionDetails = () => {
     }
 
     return (
-        <div className="mx-32 mt-8">
+        <div className="mx-64 mt-8">
             <div
                 className="flex items-center justify-start text-cinfo cursor-pointer hover:underline"
                 onClick={handleViewSubmissions}

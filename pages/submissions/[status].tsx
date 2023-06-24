@@ -44,7 +44,7 @@ const SubmissionsView = () => {
     }
 
     return (
-        <div className="mx-16 mt-8">
+        <div className="mx-64 mt-8">
             <h1 className="text-4xl">{capitalize(status)} submissions</h1>
             <TableContainer component={Paper} className="mx-auto mt-8">
                 <Table size="small">

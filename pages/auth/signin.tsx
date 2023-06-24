@@ -9,6 +9,7 @@ import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Toaster, toast } from 'react-hot-toast'
+import { useSignIn } from './services/auth.service'
 
 type SignInData = {
     username: string
@@ -30,10 +31,20 @@ const SignIn = () => {
         mode: 'all',
     })
 
+    const { token, signInWithPayload } = useSignIn()
+
     useEffect(() => {
         // Enable to see something funny
         // snowflakeCursor();
     }, [])
+
+    useEffect(() => {
+        if (token == null || token === '') {
+            return
+        }
+        localStorage.setItem('AccessToken', token)
+        router.push('/submissions/pending')
+    }, [token, router])
 
     const notifyErr = (message: string): void => {
         toast.error(message)
@@ -50,18 +61,7 @@ const SignIn = () => {
                 usernameOrEmail: data.username,
                 password: data.password,
             }
-            const response = await fetch('/api/auth/signin', {
-                method: 'POST',
-                body: JSON.stringify(payload),
-            })
-            const result = await response.json()
-            if (!response.ok) {
-                notifyErr(`Error Code: ${result.errCode}`)
-                return
-            }
-
-            localStorage.setItem(process.env.AT_ID, result.token)
-            redirectToSubmissions()
+            await signInWithPayload(payload)
         } catch (err) {
             notifyErr(err.message)
         } finally {
@@ -70,7 +70,7 @@ const SignIn = () => {
     }
 
     return (
-        <div className="h-screen flex items-center justify-center flex-col">
+        <div className="h-screen flex items-center justify-center flex-col mx-32">
             <div>
                 <h1 className="text-4xl text-cprimary-300">Nấu và Ăn</h1>
             </div>
