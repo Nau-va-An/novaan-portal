@@ -17,15 +17,15 @@ export const useFetchSubmissions = (status: string) => {
         timeout: 10000,
     })
 
-    const [requested, setRequested] = useState(false)
     const [recipes, setRecipes] = useState<Recipe[]>([])
     const [tips, setTips] = useState<CulinaryTips[]>([])
 
     const fetchContent = async () => {
-        if (requested) {
-            return
-        }
-        const submissions = await getReq(`admin/submissions/?status=${status}`)
+        const query =
+            status === 'history'
+                ? 'status=approved&status=rejected'
+                : `status=${status}`
+        const submissions = await getReq(`admin/submissions/?${query}`)
         if (submissions == null) {
             console.log('Submission comeback as null')
             return
@@ -34,7 +34,6 @@ export const useFetchSubmissions = (status: string) => {
         const { recipes, culinaryTips } = submissions
         setRecipes(recipes)
         setTips(culinaryTips)
-        setRequested(true)
     }
 
     return { recipes, tips, fetchContent }
