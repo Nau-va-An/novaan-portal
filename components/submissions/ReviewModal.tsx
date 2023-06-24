@@ -38,6 +38,7 @@ const ReviewModal = ({
         formState: { errors },
         resetField,
         setFocus,
+        clearErrors,
     } = useForm<ReviewModalForm>({
         defaultValues: {
             message: '',
@@ -46,7 +47,7 @@ const ReviewModal = ({
     })
 
     useEffect(() => {
-        if ((Status[selectedStatus] as any) === Status.Rejected.valueOf()) {
+        if (Status[selectedStatus] === Status[Status.Rejected]) {
             setFocus('message')
         }
     }, [selectedStatus])
@@ -54,24 +55,28 @@ const ReviewModal = ({
     const resetState = () => {
         setSelectedStatus(Status.Approved)
         resetField('message')
+        clearErrors()
     }
 
-    const handleChangeStatus = (event: SyntheticEvent, value: string) => {
-        const newStatus = Status[value]
-        if (newStatus === selectedStatus) {
+    const handleChangeStatus = (_, value: string) => {
+        if (Status[value].toString() === selectedStatus.toString()) {
             return
         }
-        setSelectedStatus(newStatus)
+        setSelectedStatus(Status[value])
     }
 
-    const handleReviewSubmit = (data: ReviewModalForm) => {
-        handleSubmit(selectedStatus, data.message)
+    const handleCloseReview = () => {
         resetState()
         handleClose()
     }
 
+    const handleReviewSubmit = (data: ReviewModalForm) => {
+        handleSubmit(selectedStatus, data.message)
+        handleCloseReview()
+    }
+
     return (
-        <Modal open={isOpen} onClose={handleClose} disableAutoFocus>
+        <Modal open={isOpen} onClose={handleCloseReview} disableAutoFocus>
             <div className="relative w-full max-w-2xl mx-auto my-auto">
                 <form onSubmit={handleFormSubmit(handleReviewSubmit)}>
                     <div className="relative bg-white rounded-lg shadow">
@@ -83,7 +88,7 @@ const ReviewModal = ({
                                 type="button"
                                 className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
                                 data-modal-hide="defaultModal"
-                                onClick={handleClose}
+                                onClick={handleCloseReview}
                             >
                                 <svg
                                     aria-hidden="true"
@@ -111,15 +116,15 @@ const ReviewModal = ({
                                     return (
                                         <FormControlLabel
                                             key={statusStr}
-                                            value={status}
+                                            value={Status[status]}
                                             control={<Radio />}
                                             label={capitalize(statusStr)}
                                         />
                                     )
                                 })}
                             </RadioGroup>
-                            {(Status[selectedStatus] as any) ===
-                                Status.Rejected.valueOf() && (
+                            {Status[selectedStatus] ===
+                                Status[Status.Rejected] && (
                                 <div className="mt-4">
                                     <div className="text-lg">
                                         Rejected message

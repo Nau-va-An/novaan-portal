@@ -58,6 +58,6 @@ export const SIGN_UP_UNKNOWN_ERROR = 'Đã có lỗi xảy ra, vui lòng thử l
 export const SIGN_UP_FAIL_TITLE = 'Đăng ký tài khoản thất bại'
 
 export const REVIEW_MESSAGE_TOO_SHORT =
-    'Tin nhắn giải thích lí do từ chối quá ngắn'
+    'Lời nhắn giải thích lí do từ chối quá ngắn, cần ít nhất 30 kí tự'
 export const REVIEW_MESSAGE_TOO_LONG =
-    'Tin nhắn giải thích lí do từ chối quá dài'
+    'Lời nhắn giải thích lí do từ chối quá dài, tối đa 500 kí tư'
