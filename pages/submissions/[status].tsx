@@ -7,7 +7,7 @@ import {
     SubmissionType,
 } from './types/submission'
 import { useFetchSubmissions } from './services/submissions.service'
-import { capitalize, lowerCase } from 'lodash'
+import { capitalize } from 'lodash'
 import {
     Paper,
     Table,
@@ -25,22 +25,34 @@ import { customColors } from '@/tailwind.config'
 const SubmissionsView = () => {
     const router = useRouter()
 
-    const [status, setStatus] = useState<string>('pending')
+    const [status, setStatus] = useState<string>(router.query.status as string)
     const [content, setContent] = useState<(Recipe | CulinaryTips)[]>([])
     const [currentTab, setCurrentTab] = useState(SubmissionType.Recipe)
     const { recipes, tips, fetchContent } = useFetchSubmissions(status)
 
+    const resetState = () => {
+        setContent([])
+        setCurrentTab(SubmissionType.Recipe)
+    }
+
     useEffect(() => {
         const status = router.query.status as string
-        if (status == null) {
+        resetState()
+        if (status == null || status.length === 0) {
             return
         }
         setStatus(status)
-        fetchContent()
-    }, [router, recipes, tips, fetchContent])
+    }, [router.query.status])
 
     useEffect(() => {
-        if (recipes.length === 0) {
+        if (status == null || status.length === 0) {
+            return
+        }
+        fetchContent()
+    }, [status])
+
+    useEffect(() => {
+        if (recipes == null || recipes.length === 0) {
             return
         }
         setContent(recipes)
@@ -85,7 +97,7 @@ const SubmissionsView = () => {
     }, [])
 
     return (
-        <div className="mx-64 mt-8">
+        <div className="mx-16 mt-8">
             <h1 className="text-4xl">{capitalize(status)} submissions</h1>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                 <Tabs
@@ -112,6 +124,7 @@ const SubmissionsView = () => {
                             <TableCell align="center">Type</TableCell>
                             <TableCell align="center">Created at</TableCell>
                             <TableCell align="center">Updated at</TableCell>
+                            <TableCell align="center">Status</TableCell>
                             <TableCell align="center">Actions</TableCell>
                         </TableRow>
                     </TableHead>
@@ -136,6 +149,9 @@ const SubmissionsView = () => {
                                     </TableCell>
                                     <TableCell align="center">TBD</TableCell>
                                     <TableCell align="center">TBD</TableCell>
+                                    <TableCell align="center">
+                                        {content.status}
+                                    </TableCell>
                                     <TableCell align="center">
                                         <a
                                             className="text-cinfo cursor-pointer hover:underline"
