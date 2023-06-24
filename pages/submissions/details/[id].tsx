@@ -6,21 +6,23 @@ import React, {
     useMemo,
     useState,
 } from 'react'
-import { CulinaryTips, Recipe } from '../types/submission'
+import { CulinaryTips, Recipe, Status } from '../types/submission'
 import { capitalize } from 'lodash'
 import ReactPlayer from 'react-player'
-import Image from 'next/image'
-import moment, { duration } from 'moment'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import {
     RecipeGuideSection,
     RecipeInfoCard,
 } from '@/components/submissions/RecipeLayout'
+import ReviewModal from '@/components/submissions/ReviewModal'
 
 const SubmissionDetails = () => {
     const router = useRouter()
 
     const [content, setContent] = useState<Recipe | CulinaryTips>(null)
+    const [reviewOpen, setReviewOpen] = useState(false)
+    const [availableStatus, setAvailableStatus] = useState<Status[]>([])
+
     useEffect(() => {
         if (router.query.content == null) {
             return
@@ -31,8 +33,38 @@ const SubmissionDetails = () => {
         setContent(content)
     }, [router])
 
+    useEffect(() => {
+        if (content == null) {
+            return
+        }
+
+        if ((Status[content.status] as any) === Status.Pending.valueOf()) {
+            setAvailableStatus([Status.Approved, Status.Rejected])
+        } else {
+            setAvailableStatus([
+                Status.Pending,
+                Status.Approved,
+                Status.Rejected,
+            ])
+        }
+    }, [content])
+
     const handleViewSubmissions = () => {
         router.back()
+    }
+
+    const handleOpenReviewModal = () => {
+        setReviewOpen(true)
+    }
+
+    const handleCloseReviewModal = () => {
+        setReviewOpen(false)
+    }
+
+    const handleSubmitReview = (status: Status, message?: string) => {
+        console.log(status)
+        console.log(message)
+        // Send request
     }
 
     const isRecipe = useCallback(
@@ -47,7 +79,7 @@ const SubmissionDetails = () => {
     }
 
     return (
-        <div className="mx-64 mt-8">
+        <div className="mx-32 mt-8">
             <div
                 className="flex items-center justify-start text-cinfo cursor-pointer hover:underline"
                 onClick={handleViewSubmissions}
@@ -90,6 +122,21 @@ const SubmissionDetails = () => {
                 </div>
             </div>
             {isRecipe(content) && <RecipeGuideSection content={content} />}
+            <div className="flex items-center justify-center mt-8 mb-16">
+                <button
+                    type="button"
+                    className="px-4 py-2 bg-cprimary-300 hover:bg-cprimary-400 text-white rounded-lg"
+                    onClick={handleOpenReviewModal}
+                >
+                    Submit review
+                </button>
+            </div>
+            <ReviewModal
+                isOpen={reviewOpen}
+                availableStatus={availableStatus}
+                handleSubmit={handleSubmitReview}
+                handleClose={handleCloseReviewModal}
+            />
         </div>
     )
 }

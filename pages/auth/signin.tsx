@@ -70,7 +70,7 @@ const SignIn = () => {
     }
 
     return (
-        <div className="h-screen flex items-center justify-center flex-col mx-16">
+        <div className="h-screen flex items-center justify-center flex-col">
             <div>
                 <h1 className="text-4xl text-cprimary-300">Nấu và Ăn</h1>
             </div>

@@ -56,3 +56,8 @@ export const SIGN_UP_REENTER_PASSWORD_DIFFERENT_ERROR =
     'Nhập lại mật khẩu phải giống mật khẩu'
 export const SIGN_UP_UNKNOWN_ERROR = 'Đã có lỗi xảy ra, vui lòng thử lại sau.'
 export const SIGN_UP_FAIL_TITLE = 'Đăng ký tài khoản thất bại'
+
+export const REVIEW_MESSAGE_TOO_SHORT =
+    'Tin nhắn giải thích lí do từ chối quá ngắn'
+export const REVIEW_MESSAGE_TOO_LONG =
+    'Tin nhắn giải thích lí do từ chối quá dài'
