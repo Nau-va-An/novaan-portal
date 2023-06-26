@@ -1,11 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
-import {
-    CulinaryTips,
-    Recipe,
-    Status,
-    SubmissionType,
-} from './types/submission'
+import { CulinaryTips, Recipe, SubmissionType } from './types/submission'
 import { useFetchSubmissions } from './services/submissions.service'
 import { capitalize } from 'lodash'
 import {
@@ -74,13 +69,12 @@ const SubmissionsView = () => {
     }
 
     const handleChangeTab = (event: React.SyntheticEvent, newValue: any) => {
-        console.log(newValue)
         if (newValue === SubmissionType.Recipe) {
             setCurrentTab(newValue)
-            setContent(recipes)
+            setContent(recipes || [])
         } else {
             setCurrentTab(newValue)
-            setContent(tips)
+            setContent(tips || [])
         }
     }
 
