@@ -68,7 +68,7 @@ const SubmissionsView = () => {
         )
     }
 
-    const handleChangeTab = (event: React.SyntheticEvent, newValue: any) => {
+    const handleChangeTab = (_: React.SyntheticEvent, newValue: any) => {
         if (newValue === SubmissionType.Recipe) {
             setCurrentTab(newValue)
             setContent(recipes || [])
