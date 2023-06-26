@@ -42,6 +42,8 @@ export interface Recipe {
     instructions: Instruction[]
     ingredients: Ingredient[]
     status: Status
+    createdAt: Date
+    updatedAt: Date
 }
 
 export interface CulinaryTips {
@@ -51,6 +53,8 @@ export interface CulinaryTips {
     description: string
     video: string
     status: Status
+    createdAt: Date
+    updatedAt: Date
 }
 
 export enum SubmissionType {

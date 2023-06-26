@@ -15,13 +15,29 @@ import {
     RecipeInfoCard,
 } from '@/components/submissions/RecipeLayout'
 import ReviewModal from '@/components/submissions/ReviewModal'
+import useS3Url from '@/common/hooks/useS3Url'
+import Image from 'next/image'
 
 const SubmissionDetails = () => {
     const router = useRouter()
 
     const [content, setContent] = useState<Recipe | CulinaryTips>(null)
+    const [videoUrl, setVideoUrl] = useState('')
+
     const [reviewOpen, setReviewOpen] = useState(false)
     const [availableStatus, setAvailableStatus] = useState<Status[]>([])
+
+    const { getDownloadUrl } = useS3Url()
+
+    useEffect(() => {
+        if (content?.video == null) {
+            return
+        }
+        getDownloadUrl(content.video).then((url) => {
+            setVideoUrl(url)
+            console.log(url)
+        })
+    }, [content])
 
     useEffect(() => {
         if (router.query.content == null) {
@@ -92,10 +108,8 @@ const SubmissionDetails = () => {
 
             <div className="mt-16 flex items-center justify-center">
                 <ReactPlayer
-                    className="w-auto h-full aspect-auto"
-                    url={
-                        'https://assets.mixkit.co/videos/preview/mixkit-little-girl-next-to-baskets-of-easter-eggs-48596-large.mp4'
-                    }
+                    className="w-auto h-auto aspect-auto"
+                    url={videoUrl}
                     controls={true}
                 />
             </div>

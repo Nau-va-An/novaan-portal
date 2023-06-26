@@ -4,8 +4,9 @@ import {
     Recipe,
 } from '@/pages/submissions/types/submission'
 import moment from 'moment'
-import { Fragment, useMemo } from 'react'
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react'
 import Image from 'next/image'
+import useS3Url from '@/common/hooks/useS3Url'
 
 interface RecipeLayoutProps {
     content: Recipe
@@ -89,31 +90,55 @@ const RecipeIngredients = ({ ingredients }: IngredientsProps) => {
 }
 
 const RecipeInstructions = ({ instructions }: InstructionProps) => {
+    const { getDownloadUrl } = useS3Url()
+
+    const [steps, setSteps] = useState([])
+
+    useEffect(() => {
+        getAllImageUrl()
+    }, [instructions])
+
+    const getAllImageUrl = useCallback(async () => {
+        if (instructions == null || instructions.length === 0) {
+            return
+        }
+        const newInstructions = await Promise.all(
+            instructions.map(async (step) => {
+                if (!step.image) {
+                    return step
+                }
+
+                const downloadUrl = await getDownloadUrl(step.image)
+                return { ...step, image: downloadUrl }
+            })
+        )
+
+        setSteps(newInstructions)
+    }, [instructions, getDownloadUrl])
+
     return (
         <>
             <div className="text-2xl">Instructions</div>
             <div className="mt-4">
-                {instructions.map((instruction) => {
+                {steps.map((step) => {
                     const instructionCount = instructions.length
                     return (
-                        <div key={instruction.step} className="mb-8">
+                        <div key={step.step} className="mb-8">
                             <div className="text-xl">
-                                Step {instruction.step}/{instructionCount}
+                                Step {step.step}/{instructionCount}
                             </div>
-                            <div className="mt-2">
-                                <Image
-                                    src={
-                                        'https://m.media-amazon.com/images/I/616U8Co1ASL.jpg'
-                                    }
-                                    width={1000}
-                                    height={1000}
-                                    style={{ objectFit: 'contain' }}
-                                    alt={`step ${instruction.step} illustration`}
-                                />
-                            </div>
-                            <p className="text-lg mt-2">
-                                {instruction.description}
-                            </p>
+                            {step.image && (
+                                <div className="mt-2">
+                                    <Image
+                                        src={step.image}
+                                        width={300}
+                                        height={300}
+                                        style={{ objectFit: 'contain' }}
+                                        alt={`step ${step.step} illustration`}
+                                    />
+                                </div>
+                            )}
+                            <p className="text-lg mt-2">{step.description}</p>
                         </div>
                     )
                 })}
