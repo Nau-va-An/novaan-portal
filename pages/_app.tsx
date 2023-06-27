@@ -13,6 +13,7 @@ import {
 } from '@mui/material'
 import { customColors } from '@/tailwind.config'
 import Navbar from '@/common/components/Navbar'
+import { Toaster } from 'react-hot-toast'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -22,6 +23,7 @@ export default function App({ Component, pageProps }) {
             <ErrorBoundary>
                 <Navbar />
                 <Component {...pageProps} />
+                <Toaster />
             </ErrorBoundary>
         </div>
     )

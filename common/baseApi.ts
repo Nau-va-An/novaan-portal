@@ -112,7 +112,14 @@ export const useFetch = (config: RequestConfig) => {
                 }
 
                 clearTimeout(timeoutId)
-                return response.json()
+
+                // Avoid empty response body from server
+                try {
+                    const body = await response.json()
+                    return body
+                } catch {
+                    return true
+                }
             } catch (err) {
                 handleServerError(err)
                 return null

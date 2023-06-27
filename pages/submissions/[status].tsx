@@ -1,6 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
-import { CulinaryTips, Recipe, SubmissionType } from './types/submission'
+import {
+    CulinaryTips,
+    Recipe,
+    Status,
+    SubmissionType,
+} from './types/submission'
 import { useFetchSubmissions } from './services/submissions.service'
 import { capitalize } from 'lodash'
 import {
@@ -20,10 +25,10 @@ import { customColors } from '@/tailwind.config'
 const SubmissionsView = () => {
     const router = useRouter()
 
-    const [status, setStatus] = useState<string>(router.query.status as string)
+    const [status, setStatus] = useState<string>('')
     const [content, setContent] = useState<(Recipe | CulinaryTips)[]>([])
     const [currentTab, setCurrentTab] = useState(SubmissionType.Recipe)
-    const { recipes, tips, fetchContent } = useFetchSubmissions(status)
+    const { recipes, tips, fetchContent } = useFetchSubmissions()
 
     const resetState = () => {
         setContent([])
@@ -43,7 +48,8 @@ const SubmissionsView = () => {
         if (status == null || status.length === 0) {
             return
         }
-        fetchContent()
+        console.log('running here', status)
+        fetchContent(status)
     }, [status])
 
     useEffect(() => {

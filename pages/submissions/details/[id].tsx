@@ -17,6 +17,8 @@ import {
 import ReviewModal from '@/components/submissions/ReviewModal'
 import useS3Url from '@/common/hooks/useS3Url'
 import Image from 'next/image'
+import { useUpdateSubmission } from '../services/submissions.service'
+import toast, { Toaster } from 'react-hot-toast'
 
 const SubmissionDetails = () => {
     const router = useRouter()
@@ -25,9 +27,10 @@ const SubmissionDetails = () => {
     const [videoUrl, setVideoUrl] = useState('')
 
     const [reviewOpen, setReviewOpen] = useState(false)
-    const [availableStatus, setAvailableStatus] = useState<Status[]>([])
+    const [availableStatus, setAvailableStatus] = useState<Status[]>(null)
 
     const { getDownloadUrl } = useS3Url()
+    const { updateSubmission } = useUpdateSubmission()
 
     useEffect(() => {
         if (content?.video == null) {
@@ -77,10 +80,14 @@ const SubmissionDetails = () => {
         setReviewOpen(false)
     }
 
-    const handleSubmitReview = (status: Status, message?: string) => {
-        console.log(status)
-        console.log(message)
-        // Send request
+    const handleSubmitReview = async (status: Status, message?: string) => {
+        await toast.promise(updateSubmission(content, status, message), {
+            loading: 'Submitting your review',
+            success: <b>Review saved</b>,
+            error: <b>Review failed. Please try again later</b>,
+        })
+
+        handleViewSubmissions()
     }
 
     const isRecipe = useCallback(
@@ -148,6 +155,7 @@ const SubmissionDetails = () => {
             <ReviewModal
                 isOpen={reviewOpen}
                 availableStatus={availableStatus}
+                currentStatus={content.status}
                 handleSubmit={handleSubmitReview}
                 handleClose={handleCloseReviewModal}
             />

@@ -1,7 +1,7 @@
 import { Status } from '@/pages/submissions/types/submission'
-import { Box, FormControlLabel, Modal, Radio, RadioGroup } from '@mui/material'
+import { FormControlLabel, Modal, Radio, RadioGroup } from '@mui/material'
 import { capitalize } from 'lodash'
-import { SyntheticEvent, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import ErrText from '../common/ErrText'
 import {
@@ -9,11 +9,12 @@ import {
     REVIEW_MESSAGE_TOO_LONG,
     REVIEW_MESSAGE_TOO_SHORT,
 } from '@/common/strings'
-import errors from '@/pages/errors'
+import toast from 'react-hot-toast'
 
 interface ReviewModalProps {
     isOpen: boolean
     availableStatus: Status[]
+    currentStatus: Status
     handleClose: () => void
     handleSubmit: (status: Status, message?: string) => void
 }
@@ -25,12 +26,11 @@ interface ReviewModalForm {
 const ReviewModal = ({
     isOpen,
     availableStatus,
+    currentStatus,
     handleClose,
     handleSubmit,
 }: ReviewModalProps) => {
-    const [selectedStatus, setSelectedStatus] = useState<Status>(
-        Status.Approved
-    )
+    const [selectedStatus, setSelectedStatus] = useState<Status>(currentStatus)
 
     const {
         register,
@@ -53,7 +53,7 @@ const ReviewModal = ({
     }, [selectedStatus])
 
     const resetState = () => {
-        setSelectedStatus(Status.Approved)
+        setSelectedStatus(currentStatus)
         resetField('message')
         clearErrors()
     }
@@ -71,6 +71,12 @@ const ReviewModal = ({
     }
 
     const handleReviewSubmit = (data: ReviewModalForm) => {
+        if (Status[currentStatus] === Status[selectedStatus]) {
+            toast.error('Cannot use the same status')
+            handleCloseReview()
+            return
+        }
+
         handleSubmit(selectedStatus, data.message)
         handleCloseReview()
     }
@@ -111,17 +117,23 @@ const ReviewModal = ({
                                 onChange={handleChangeStatus}
                                 value={Status[selectedStatus]}
                             >
-                                {availableStatus.map((status) => {
-                                    const statusStr = Status[status]
-                                    return (
-                                        <FormControlLabel
-                                            key={statusStr}
-                                            value={Status[status]}
-                                            control={<Radio />}
-                                            label={capitalize(statusStr)}
-                                        />
-                                    )
-                                })}
+                                {availableStatus &&
+                                    availableStatus.map((status) => {
+                                        const statusStr = Status[status]
+                                        const isChecked =
+                                            (statusStr as any) ===
+                                            currentStatus.valueOf()
+                                        return (
+                                            <FormControlLabel
+                                                key={statusStr}
+                                                value={Status[status]}
+                                                control={<Radio />}
+                                                disabled={isChecked}
+                                                checked={isChecked}
+                                                label={capitalize(statusStr)}
+                                            />
+                                        )
+                                    })}
                             </RadioGroup>
                             {Status[selectedStatus] ===
                                 Status[Status.Rejected] && (
