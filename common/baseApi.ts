@@ -8,8 +8,8 @@ import {
 } from './constants'
 
 interface RequestConfig {
-    timeout?: number
-    authorizationRequired?: boolean
+    timeout: number
+    authorizationRequired: boolean
 }
 
 enum HttpMethod {
@@ -66,10 +66,10 @@ export const useFetch = (config: RequestConfig) => {
             // Return to sign in page if unauthorized
             if (error instanceof UnauthorizedError) {
                 router.push('/auth/signin')
-                return
+                return true
             }
 
-            throw error
+            return false
         },
         [router]
     )
@@ -118,7 +118,11 @@ export const useFetch = (config: RequestConfig) => {
                     return true
                 }
             } catch (err) {
-                handleServerError(err)
+                if (handleServerError(err)) {
+                    return
+                }
+
+                throw err
             }
         },
         [config, getHeaders, handleServerError]

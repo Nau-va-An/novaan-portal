@@ -7,26 +7,17 @@ const useS3Url = () => {
         timeout: 10000,
     })
 
-    const getDownloadUrl = useCallback(
-        async (fileId: string) => {
-            try {
-                const downloadUrl = (await getReq(
-                    `content/download/${fileId}`
-                )) as { url: string }
+    const getDownloadUrl = async (fileId: string) => {
+        const downloadUrl = (await getReq(`content/download/${fileId}`)) as {
+            url: string
+        }
 
-                if (downloadUrl == null || downloadUrl.url == null) {
-                    console.log('Submission comeback as null')
-                    return ''
-                }
+        if (downloadUrl == null || downloadUrl.url == null) {
+            return ''
+        }
 
-                return downloadUrl.url
-            } catch {
-                // Return 404 image
-                return ''
-            }
-        },
-        [getReq]
-    )
+        return downloadUrl.url
+    }
 
     return { getDownloadUrl }
 }

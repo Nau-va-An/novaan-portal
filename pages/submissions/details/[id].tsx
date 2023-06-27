@@ -1,11 +1,5 @@
-import { useRouter } from 'next/router'
-import React, {
-    Fragment,
-    useCallback,
-    useEffect,
-    useMemo,
-    useState,
-} from 'react'
+import router, { useRouter } from 'next/router'
+import React, { useCallback, useEffect, useState } from 'react'
 import { CulinaryTips, Recipe, Status } from '../types/submission'
 import { capitalize } from 'lodash'
 import ReactPlayer from 'react-player'
@@ -18,11 +12,10 @@ import ReviewModal from '@/components/submissions/ReviewModal'
 import useS3Url from '@/common/hooks/useS3Url'
 import Image from 'next/image'
 import { useUpdateSubmission } from '../services/submissions.service'
-import toast, { Toaster } from 'react-hot-toast'
-import { content } from '@/tailwind.config'
+import toast from 'react-hot-toast'
 
 const SubmissionDetails = () => {
-    const router = useRouter()
+    const { query, isReady } = useRouter()
 
     const [content, setContent] = useState<Recipe | CulinaryTips>(null)
     const [videoUrl, setVideoUrl] = useState('')
@@ -37,26 +30,25 @@ const SubmissionDetails = () => {
             return
         }
         getDownloadUrl(content.video).then((url) => {
+            if (url == '') {
+                toast.error('Failed to load video from S3')
+                return
+            }
             setVideoUrl(url)
-            console.log(url)
         })
     }, [content])
 
     useEffect(() => {
-        if (router.query.content == null) {
+        if (!isReady || query.content == null) {
             return
         }
+
+        console.log(isReady)
 
         // Get encoded content from query
-        const content = JSON.parse(router.query.content as string)
-        setContent(content)
-    }, [router])
-
-    useEffect(() => {
-        if (content == null) {
-            return
-        }
-    }, [content])
+        const newContent = JSON.parse(query.content as string)
+        setContent(newContent)
+    }, [isReady])
 
     const handleViewSubmissions = () => {
         router.back()
@@ -87,7 +79,7 @@ const SubmissionDetails = () => {
         []
     )
 
-    if (content == null) {
+    if (!isReady || content == null) {
         return null
     }
 

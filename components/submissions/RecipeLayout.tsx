@@ -7,6 +7,7 @@ import moment from 'moment'
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react'
 import Image from 'next/image'
 import useS3Url from '@/common/hooks/useS3Url'
+import { toast } from 'react-hot-toast'
 
 interface RecipeLayoutProps {
     content: Recipe
@@ -92,69 +93,77 @@ const RecipeIngredients = ({ ingredients }: IngredientsProps) => {
 const RecipeInstructions = ({ instructions }: InstructionProps) => {
     const { getDownloadUrl } = useS3Url()
 
-    const [steps, setSteps] = useState([])
+    const [steps, setSteps] = useState<Instruction[]>()
 
     useEffect(() => {
-        getAllImageUrl()
-    }, [instructions])
-
-    const getAllImageUrl = useCallback(async () => {
         if (instructions == null || instructions.length === 0) {
             return
         }
+
+        getAllImageUrl()
+    }, [instructions])
+
+    const getAllImageUrl = async () => {
         const newInstructions = await Promise.all(
-            instructions.map(async (step) => {
-                if (!step.image) {
-                    return step
+            instructions.map(async (instruction) => {
+                if (!instruction.image) {
+                    return instruction
                 }
 
-                const downloadUrl = await getDownloadUrl(step.image)
-                return { ...step, image: downloadUrl }
+                const downloadUrl = await getDownloadUrl(instruction.image)
+                if (downloadUrl == '') {
+                    toast.error(`Failed to load step ${instruction.step} image`)
+                }
+                return { ...instruction, image: downloadUrl }
             })
         )
 
         setSteps(newInstructions)
-    }, [instructions, getDownloadUrl])
+    }
 
     return (
         <>
             <div className="text-2xl">Instructions</div>
             <div className="mt-4">
-                {steps.map((step) => {
-                    const instructionCount = instructions.length
-                    return (
-                        <div key={step.step} className="mb-8">
-                            <div className="text-xl">
-                                Step {step.step}/{instructionCount}
-                            </div>
-                            {step.image && (
-                                <div className="mt-2">
-                                    <Image
-                                        src={step.image}
-                                        width={300}
-                                        height={300}
-                                        style={{ objectFit: 'contain' }}
-                                        alt={`step ${step.step} illustration`}
-                                    />
+                {steps &&
+                    steps.map((step, index) => {
+                        const instructionCount = instructions.length
+                        return (
+                            <div key={step.step} className="mb-8">
+                                <div className="text-xl">
+                                    Step {step?.step || index + 1}/
+                                    {instructionCount}
                                 </div>
-                            )}
-                            <p className="text-lg mt-2">{step.description}</p>
-                        </div>
-                    )
-                })}
+                                {step.image && (
+                                    <div className="mt-2">
+                                        <Image
+                                            src={step.image}
+                                            width={300}
+                                            height={300}
+                                            style={{ objectFit: 'contain' }}
+                                            alt={`step ${step.step} illustration`}
+                                        />
+                                    </div>
+                                )}
+                                <p className="text-lg mt-2">
+                                    {step.description}
+                                </p>
+                            </div>
+                        )
+                    })}
             </div>
         </>
     )
 }
 
-export const RecipeGuideSection = ({ content }: RecipeLayoutProps) => {
+export const RecipeGuideSection = (props: RecipeLayoutProps) => {
     return (
         <div className="grid grid-cols-3">
             <div className="col-span-1">
-                <RecipeIngredients ingredients={content.ingredients} />
+                <RecipeIngredients ingredients={props.content.ingredients} />
             </div>
             <div className="col-span-2">
-                <RecipeInstructions instructions={content.instructions} />
+                <RecipeInstructions instructions={props.content.instructions} />
             </div>
         </div>
     )
