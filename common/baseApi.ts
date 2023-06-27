@@ -1,18 +1,15 @@
-import { Undefinable } from '@/common/types'
-import dotenv from 'dotenv'
 import UnauthorizedError from './errors/Unauthorized'
 import { useRouter } from 'next/router'
 import { useCallback } from 'react'
-import toast from 'react-hot-toast'
-dotenv.config()
-
-const API_URL = 'http://localhost:8000/api/'
-const API_TIMEOUT = 3000
-const ACCESS_TOKEN_ID = 'AccessToken'
+import {
+    ACCESS_TOKEN_STORAGE_KEY,
+    DEFAULT_API_TIMEOUT,
+    DEFAULT_API_URL,
+} from './constants'
 
 interface RequestConfig {
-    timeout: number
-    authorizationRequired: boolean
+    timeout?: number
+    authorizationRequired?: boolean
 }
 
 enum HttpMethod {
@@ -27,7 +24,7 @@ export const useFetch = (config: RequestConfig) => {
 
     const getDefaultConfig = (): RequestConfig => {
         return {
-            timeout: API_TIMEOUT,
+            timeout: DEFAULT_API_TIMEOUT,
             authorizationRequired: false,
         }
     }
@@ -51,10 +48,10 @@ export const useFetch = (config: RequestConfig) => {
             if (accessTokenRequired) {
                 // Get access token from secure storage
                 const accessToken = localStorage.getItem(
-                    ACCESS_TOKEN_ID || 'AccessToken'
+                    ACCESS_TOKEN_STORAGE_KEY
                 )
                 if (accessToken == null) {
-                    throw new Error('Access token not found')
+                    throw new UnauthorizedError()
                 }
                 headers.append('Authorization', `Bearer ${accessToken}`)
             }
@@ -71,36 +68,36 @@ export const useFetch = (config: RequestConfig) => {
                 router.push('/auth/signin')
                 return
             }
-            // Redirect to errors page if cannot resolve
-            router.push('/errors')
+
+            throw error
         },
         [router]
     )
 
     const sendBaseRequest = useCallback(
         async (url: string, method: HttpMethod, body?: any): Promise<any> => {
-            const requestConfig = config || getDefaultConfig()
-            const headers = await getHeaders(
-                requestConfig.authorizationRequired
-            )
-
-            // Use signal to avoid running the request for too long
-            // Docs for canceling fetch API request
-            // https://javascript.info/fetch-abort
-            const timeout = requestConfig.timeout
-            const controller = new AbortController()
-            if (isNaN(timeout) || timeout <= 0) {
-                throw new Error(
-                    'Timeout value is not valid. Please reconfig in .env'
-                )
-            }
-
-            const timeoutId = setTimeout(() => {
-                controller.abort()
-            }, timeout)
-
             try {
-                const response = await fetch(`${API_URL}${url}`, {
+                const requestConfig = config || getDefaultConfig()
+                const headers = await getHeaders(
+                    requestConfig.authorizationRequired
+                )
+
+                // Use signal to avoid running the request for too long
+                // Docs for canceling fetch API request
+                // https://javascript.info/fetch-abort
+                const timeout = requestConfig.timeout
+                const controller = new AbortController()
+                if (isNaN(timeout) || timeout <= 0) {
+                    throw new Error(
+                        'Timeout value is not valid. Please reconfig in .env'
+                    )
+                }
+
+                const timeoutId = setTimeout(() => {
+                    controller.abort()
+                }, timeout)
+
+                const response = await fetch(`${DEFAULT_API_URL}${url}`, {
                     method,
                     headers,
                     body: JSON.stringify(body),
@@ -122,7 +119,6 @@ export const useFetch = (config: RequestConfig) => {
                 }
             } catch (err) {
                 handleServerError(err)
-                return null
             }
         },
         [config, getHeaders, handleServerError]

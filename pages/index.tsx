@@ -1,13 +1,12 @@
-import { RedirectType } from 'next/dist/client/components/redirect'
-import { redirect } from 'next/navigation'
-import { useRouter } from 'next/router'
 import React, { useEffect } from 'react'
+import { useRouter } from 'next/router'
+import { ACCESS_TOKEN_STORAGE_KEY } from '@/common/constants'
 
 const Home = () => {
     const router = useRouter()
 
     const isTokenAvailable = (): boolean => {
-        const token = localStorage.getItem(process.env.AT_ID)
+        const token = localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY)
         return !!token
     }
 

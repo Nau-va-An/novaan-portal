@@ -35,7 +35,6 @@ export const useFetchSubmissions = () => {
                     : `status=${status}`
             const submissions = await getReq(`admin/submissions?${query}`)
             if (submissions == null) {
-                console.log('Submission comeback as null')
                 return
             }
 

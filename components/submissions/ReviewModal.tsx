@@ -1,15 +1,17 @@
-import { Status } from '@/pages/submissions/types/submission'
-import { FormControlLabel, Modal, Radio, RadioGroup } from '@mui/material'
-import { capitalize } from 'lodash'
 import { useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import ErrText from '../common/ErrText'
+import { capitalize } from 'lodash'
+import toast from 'react-hot-toast'
+
+import { Status } from '@/pages/submissions/types/submission'
 import {
     COMMON_EMPTY_FIELD_NOT_ALLOWED,
     REVIEW_MESSAGE_TOO_LONG,
     REVIEW_MESSAGE_TOO_SHORT,
 } from '@/common/strings'
-import toast from 'react-hot-toast'
+
+import { FormControlLabel, Modal, Radio, RadioGroup } from '@mui/material'
+import ErrText from '../common/ErrText'
 
 interface ReviewModalProps {
     isOpen: boolean
@@ -34,7 +36,6 @@ const ReviewModal = ({
 
     const availableStatus = useMemo(() => {
         if ((Status[currentStatus] as any) === Status.Pending) {
-            console.log('is status pending')
             setSelectedStatus(Status.Approved)
             return [Status.Approved, Status.Rejected]
         } else {
