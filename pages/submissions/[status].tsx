@@ -1,6 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
-import { CulinaryTips, Recipe, SubmissionType } from './types/submission'
+import {
+    CulinaryTips,
+    Recipe,
+    Status,
+    SubmissionType,
+} from './types/submission'
 import { useFetchSubmissions } from './services/submissions.service'
 import { capitalize } from 'lodash'
 import {
@@ -20,10 +25,11 @@ import { customColors } from '@/tailwind.config'
 const SubmissionsView = () => {
     const router = useRouter()
 
-    const [status, setStatus] = useState<string>(router.query.status as string)
-    const [content, setContent] = useState<(Recipe | CulinaryTips)[]>([])
+    const [status, setStatus] = useState<string>()
+    const [content, setContent] = useState<(Recipe | CulinaryTips)[]>()
     const [currentTab, setCurrentTab] = useState(SubmissionType.Recipe)
-    const { recipes, tips, fetchContent } = useFetchSubmissions(status)
+
+    const { recipes, tips, fetchContent } = useFetchSubmissions()
 
     const resetState = () => {
         setContent([])
@@ -31,19 +37,19 @@ const SubmissionsView = () => {
     }
 
     useEffect(() => {
-        const status = router.query.status as string
+        const currentStatus = router.query.status as string
         resetState()
-        if (status == null || status.length === 0) {
+        if (currentStatus == null || currentStatus.length === 0) {
             return
         }
-        setStatus(status)
+        setStatus(currentStatus)
     }, [router.query.status])
 
     useEffect(() => {
         if (status == null || status.length === 0) {
             return
         }
-        fetchContent()
+        fetchContent(status)
     }, [status])
 
     useEffect(() => {
@@ -69,13 +75,10 @@ const SubmissionsView = () => {
     }
 
     const handleChangeTab = (_: React.SyntheticEvent, newValue: any) => {
-        if (newValue === SubmissionType.Recipe) {
-            setCurrentTab(newValue)
-            setContent(recipes || [])
-        } else {
-            setCurrentTab(newValue)
-            setContent(tips || [])
-        }
+        setCurrentTab(newValue)
+        newValue === SubmissionType.Recipe
+            ? setContent(recipes || [])
+            : setContent(tips || [])
     }
 
     const submissionTypes = useMemo((): {
@@ -123,42 +126,47 @@ const SubmissionsView = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {content.map((content, index) => {
-                            const isRecipe = 'instructions' in content
-                            return (
-                                <TableRow key={content.id}>
-                                    <TableCell align="center">
-                                        {index + 1}
-                                    </TableCell>
-                                    <TableCell align="left">
-                                        {content.title}
-                                    </TableCell>
-                                    <TableCell
-                                        align="center"
-                                        sx={{ fontWeight: 600 }}
-                                    >
-                                        {isRecipe
-                                            ? SubmissionType.Recipe
-                                            : SubmissionType.Tips}
-                                    </TableCell>
-                                    <TableCell align="center">TBD</TableCell>
-                                    <TableCell align="center">TBD</TableCell>
-                                    <TableCell align="center">
-                                        {content.status}
-                                    </TableCell>
-                                    <TableCell align="center">
-                                        <a
-                                            className="text-cinfo cursor-pointer hover:underline"
-                                            onClick={() =>
-                                                handleViewDetails(content)
-                                            }
+                        {content &&
+                            content.map((content, index) => {
+                                const isRecipe = 'instructions' in content
+                                return (
+                                    <TableRow key={content.id}>
+                                        <TableCell align="center">
+                                            {index + 1}
+                                        </TableCell>
+                                        <TableCell align="left">
+                                            {content.title}
+                                        </TableCell>
+                                        <TableCell
+                                            align="center"
+                                            sx={{ fontWeight: 600 }}
                                         >
-                                            View details
-                                        </a>
-                                    </TableCell>
-                                </TableRow>
-                            )
-                        })}
+                                            {isRecipe
+                                                ? SubmissionType.Recipe
+                                                : SubmissionType.CulinaryTip}
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            TBD
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            TBD
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            {content.status}
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            <a
+                                                className="text-cinfo cursor-pointer hover:underline"
+                                                onClick={() =>
+                                                    handleViewDetails(content)
+                                                }
+                                            >
+                                                View details
+                                            </a>
+                                        </TableCell>
+                                    </TableRow>
+                                )
+                            })}
                     </TableBody>
                 </Table>
             </TableContainer>

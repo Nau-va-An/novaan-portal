@@ -10,9 +10,10 @@ import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Toaster, toast } from 'react-hot-toast'
 import { useSignIn } from './services/auth.service'
+import { ACCESS_TOKEN_STORAGE_KEY } from '@/common/constants'
 
 type SignInData = {
-    username: string
+    email: string
     password: string
 }
 
@@ -25,7 +26,7 @@ const SignIn = () => {
         formState: { errors },
     } = useForm<SignInData>({
         defaultValues: {
-            username: '',
+            email: '',
             password: '',
         },
         mode: 'all',
@@ -42,7 +43,7 @@ const SignIn = () => {
         if (token == null || token === '') {
             return
         }
-        localStorage.setItem('AccessToken', token)
+        localStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, token)
         router.push('/submissions/pending')
     }, [token, router])
 
@@ -58,7 +59,7 @@ const SignIn = () => {
         setLoading(true)
         try {
             const payload = {
-                usernameOrEmail: data.username,
+                email: data.email,
                 password: data.password,
             }
             await signInWithPayload(payload)
@@ -79,23 +80,23 @@ const SignIn = () => {
                 className="w-1/3 mt-12 flex flex-col items-center justify-center"
             >
                 <div className="flex flex-col w-full">
-                    <label htmlFor="username">Username</label>
+                    <label htmlFor="email">Email</label>
                     <input
                         type="text"
-                        id="username"
-                        placeholder="Enter username"
+                        id="email"
+                        placeholder="Enter email"
                         className="mt-2 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
-                        {...register('username', {
+                        {...register('email', {
                             required: true,
                             pattern:
                                 /^\w+([.-]?\w+)*(@\w+([.-]?\w+)*(\.\w{2,3})+)?$/,
                         })}
                     />
                     <div className="mt-2">
-                        {errors.username?.type === 'required' && (
+                        {errors.email?.type === 'required' && (
                             <ErrText>{COMMON_EMPTY_FIELD_NOT_ALLOWED}</ErrText>
                         )}
-                        {errors.username?.type === 'pattern' && (
+                        {errors.email?.type === 'pattern' && (
                             <ErrText>{AUTH_EMAIL_INVALID}</ErrText>
                         )}
                     </div>
@@ -123,7 +124,6 @@ const SignIn = () => {
                     Sign In
                 </button>
             </form>
-            <Toaster />
         </div>
     )
 }

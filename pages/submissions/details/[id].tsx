@@ -1,11 +1,5 @@
-import { useRouter } from 'next/router'
-import React, {
-    Fragment,
-    useCallback,
-    useEffect,
-    useMemo,
-    useState,
-} from 'react'
+import router, { useRouter } from 'next/router'
+import React, { useCallback, useEffect, useState } from 'react'
 import { CulinaryTips, Recipe, Status } from '../types/submission'
 import { capitalize } from 'lodash'
 import ReactPlayer from 'react-player'
@@ -17,53 +11,44 @@ import {
 import ReviewModal from '@/components/submissions/ReviewModal'
 import useS3Url from '@/common/hooks/useS3Url'
 import Image from 'next/image'
+import { useUpdateSubmission } from '../services/submissions.service'
+import toast from 'react-hot-toast'
 
 const SubmissionDetails = () => {
-    const router = useRouter()
+    const { query, isReady } = useRouter()
 
     const [content, setContent] = useState<Recipe | CulinaryTips>(null)
     const [videoUrl, setVideoUrl] = useState('')
 
     const [reviewOpen, setReviewOpen] = useState(false)
-    const [availableStatus, setAvailableStatus] = useState<Status[]>([])
 
     const { getDownloadUrl } = useS3Url()
+    const { updateSubmission } = useUpdateSubmission()
 
     useEffect(() => {
         if (content?.video == null) {
             return
         }
         getDownloadUrl(content.video).then((url) => {
+            if (url == '') {
+                toast.error('Failed to load video from S3')
+                return
+            }
             setVideoUrl(url)
-            console.log(url)
         })
     }, [content])
 
     useEffect(() => {
-        if (router.query.content == null) {
+        if (!isReady || query.content == null) {
             return
         }
+
+        console.log(isReady)
 
         // Get encoded content from query
-        const content = JSON.parse(router.query.content as string)
-        setContent(content)
-    }, [router])
-
-    useEffect(() => {
-        if (content == null) {
-            return
-        }
-
-        if ((Status[content.status] as any) === Status.Pending.valueOf()) {
-            setAvailableStatus([Status.Approved, Status.Rejected])
-        } else {
-            setAvailableStatus([
-                Status.Pending,
-                Status.Approved,
-                Status.Rejected,
-            ])
-        }
-    }, [content])
+        const newContent = JSON.parse(query.content as string)
+        setContent(newContent)
+    }, [isReady])
 
     const handleViewSubmissions = () => {
         router.back()
@@ -77,10 +62,14 @@ const SubmissionDetails = () => {
         setReviewOpen(false)
     }
 
-    const handleSubmitReview = (status: Status, message?: string) => {
-        console.log(status)
-        console.log(message)
-        // Send request
+    const handleSubmitReview = async (status: Status, message?: string) => {
+        await toast.promise(updateSubmission(content, status, message), {
+            loading: 'Submitting your review',
+            success: <b>Review saved</b>,
+            error: <b>Review failed. Please try again later</b>,
+        })
+
+        handleViewSubmissions()
     }
 
     const isRecipe = useCallback(
@@ -90,7 +79,7 @@ const SubmissionDetails = () => {
         []
     )
 
-    if (content == null) {
+    if (!isReady || content == null) {
         return null
     }
 
@@ -147,7 +136,7 @@ const SubmissionDetails = () => {
             </div>
             <ReviewModal
                 isOpen={reviewOpen}
-                availableStatus={availableStatus}
+                currentStatus={content.status}
                 handleSubmit={handleSubmitReview}
                 handleClose={handleCloseReviewModal}
             />

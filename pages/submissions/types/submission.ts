@@ -59,5 +59,5 @@ export interface CulinaryTips {
 
 export enum SubmissionType {
     Recipe = 'Recipe',
-    Tips = 'Tips and Tricks',
+    CulinaryTip = 'CulinaryTip',
 }

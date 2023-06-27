@@ -1,19 +1,21 @@
-import { Status } from '@/pages/submissions/types/submission'
-import { Box, FormControlLabel, Modal, Radio, RadioGroup } from '@mui/material'
-import { capitalize } from 'lodash'
-import { SyntheticEvent, useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import ErrText from '../common/ErrText'
+import { capitalize } from 'lodash'
+import toast from 'react-hot-toast'
+
+import { Status } from '@/pages/submissions/types/submission'
 import {
     COMMON_EMPTY_FIELD_NOT_ALLOWED,
     REVIEW_MESSAGE_TOO_LONG,
     REVIEW_MESSAGE_TOO_SHORT,
 } from '@/common/strings'
-import errors from '@/pages/errors'
+
+import { FormControlLabel, Modal, Radio, RadioGroup } from '@mui/material'
+import ErrText from '../common/ErrText'
 
 interface ReviewModalProps {
     isOpen: boolean
-    availableStatus: Status[]
+    currentStatus: Status
     handleClose: () => void
     handleSubmit: (status: Status, message?: string) => void
 }
@@ -24,13 +26,22 @@ interface ReviewModalForm {
 
 const ReviewModal = ({
     isOpen,
-    availableStatus,
+    currentStatus,
     handleClose,
     handleSubmit,
 }: ReviewModalProps) => {
     const [selectedStatus, setSelectedStatus] = useState<Status>(
-        Status.Approved
+        Status[currentStatus] as any
     )
+
+    const availableStatus = useMemo(() => {
+        if ((Status[currentStatus] as any) === Status.Pending) {
+            setSelectedStatus(Status.Approved)
+            return [Status.Approved, Status.Rejected]
+        } else {
+            return [Status.Pending, Status.Approved, Status.Rejected]
+        }
+    }, [currentStatus])
 
     const {
         register,
@@ -53,7 +64,7 @@ const ReviewModal = ({
     }, [selectedStatus])
 
     const resetState = () => {
-        setSelectedStatus(Status.Approved)
+        setSelectedStatus(currentStatus)
         resetField('message')
         clearErrors()
     }
@@ -71,6 +82,12 @@ const ReviewModal = ({
     }
 
     const handleReviewSubmit = (data: ReviewModalForm) => {
+        if ((Status[currentStatus] as any) === selectedStatus) {
+            toast.error('Cannot use the same status')
+            handleCloseReview()
+            return
+        }
+
         handleSubmit(selectedStatus, data.message)
         handleCloseReview()
     }
@@ -113,11 +130,14 @@ const ReviewModal = ({
                             >
                                 {availableStatus.map((status) => {
                                     const statusStr = Status[status]
+                                    const isCurrentStatus =
+                                        (statusStr as any) === currentStatus
                                     return (
                                         <FormControlLabel
                                             key={statusStr}
                                             value={Status[status]}
                                             control={<Radio />}
+                                            disabled={isCurrentStatus}
                                             label={capitalize(statusStr)}
                                         />
                                     )
