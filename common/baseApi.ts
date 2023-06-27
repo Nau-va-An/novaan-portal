@@ -3,6 +3,7 @@ import dotenv from 'dotenv'
 import UnauthorizedError from './errors/Unauthorized'
 import { useRouter } from 'next/router'
 import { useCallback } from 'react'
+import toast from 'react-hot-toast'
 dotenv.config()
 
 const API_URL = 'http://localhost:8000/api/'
@@ -70,7 +71,6 @@ export const useFetch = (config: RequestConfig) => {
                 router.push('/auth/signin')
                 return
             }
-
             // Redirect to errors page if cannot resolve
             router.push('/errors')
         },

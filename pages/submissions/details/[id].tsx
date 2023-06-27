@@ -19,6 +19,7 @@ import useS3Url from '@/common/hooks/useS3Url'
 import Image from 'next/image'
 import { useUpdateSubmission } from '../services/submissions.service'
 import toast, { Toaster } from 'react-hot-toast'
+import { content } from '@/tailwind.config'
 
 const SubmissionDetails = () => {
     const router = useRouter()
@@ -27,7 +28,6 @@ const SubmissionDetails = () => {
     const [videoUrl, setVideoUrl] = useState('')
 
     const [reviewOpen, setReviewOpen] = useState(false)
-    const [availableStatus, setAvailableStatus] = useState<Status[]>(null)
 
     const { getDownloadUrl } = useS3Url()
     const { updateSubmission } = useUpdateSubmission()
@@ -55,16 +55,6 @@ const SubmissionDetails = () => {
     useEffect(() => {
         if (content == null) {
             return
-        }
-
-        if ((Status[content.status] as any) === Status.Pending.valueOf()) {
-            setAvailableStatus([Status.Approved, Status.Rejected])
-        } else {
-            setAvailableStatus([
-                Status.Pending,
-                Status.Approved,
-                Status.Rejected,
-            ])
         }
     }, [content])
 
@@ -154,7 +144,6 @@ const SubmissionDetails = () => {
             </div>
             <ReviewModal
                 isOpen={reviewOpen}
-                availableStatus={availableStatus}
                 currentStatus={content.status}
                 handleSubmit={handleSubmitReview}
                 handleClose={handleCloseReviewModal}
