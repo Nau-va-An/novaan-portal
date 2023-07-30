@@ -89,7 +89,7 @@ const SignIn = () => {
                         {...register('email', {
                             required: true,
                             pattern:
-                                /^\w+([.-]?\w+)*(@\w+([.-]?\w+)*(\.\w{2,3})+)?$/,
+                                /^\w+([.-]?\w+)*(@\w+([.-]?\w+)*\.\w{2,3})+$/,
                         })}
                     />
                     <div className="mt-2">

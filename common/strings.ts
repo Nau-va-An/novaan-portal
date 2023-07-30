@@ -8,7 +8,7 @@ export const COMMON_SERVER_CONNECTION_FAIL_ERROR =
     'Hiện đang không thể kết nối được với server, xin vui lòng thử lại sau'
 
 // Authentication
-export const AUTH_EMAIL_INVALID = '*Tên đăng nhập hoặc email không hợp lệ'
+export const AUTH_EMAIL_INVALID = '*Email không hợp lệ'
 export const AUTH_PASSWORD_TOO_SHORT = '*Mật khẩu phải dài ít nhất 8 kí tự'
 export const AUTH_NAME_INVALID =
     '*Tên hiện thị chỉ bao gồm chữ hoa, chữ thường và dẫu cách giữa các từ'
