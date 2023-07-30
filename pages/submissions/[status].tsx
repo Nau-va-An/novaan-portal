@@ -118,7 +118,7 @@ const SubmissionsView = () => {
                     ))}
                 </Tabs>
             </Box>
-            {content && content.length < 0 && (
+            {content && content.length > 0 && (
                 <TableContainer component={Paper} className="mx-auto mt-2">
                     <Table size="small">
                         <TableHead>
@@ -191,7 +191,7 @@ const SubmissionsView = () => {
                     </Table>
                 </TableContainer>
             )}
-            {content && content.length >= 0 && (
+            {content && content.length <= 0 && (
                 <div className="mt-16">
                     {status === 'pending' && (
                         <EmptyContent
