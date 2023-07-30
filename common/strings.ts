@@ -61,3 +61,8 @@ export const REVIEW_MESSAGE_TOO_SHORT =
     'Lời nhắn giải thích lí do từ chối quá ngắn, cần ít nhất 30 kí tự'
 export const REVIEW_MESSAGE_TOO_LONG =
     'Lời nhắn giải thích lí do từ chối quá dài, tối đa 500 kí tư'
+
+export const NAVBAR_PENDING = 'Đang chờ duyệt'
+export const NAVBAR_HISTORY = 'Lịch sử'
+export const NAVBAR_REPORTED = 'Báo cáo'
+export const NAVBAR_LOGOUT = 'Đăng xuất'
