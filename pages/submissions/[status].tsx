@@ -21,6 +21,15 @@ import {
     Box,
 } from '@mui/material'
 import { customColors } from '@/tailwind.config'
+import { RECIPE_TITLE, TIPS_TITLE } from '@/common/strings'
+
+const TabsInfo: {
+    label: string
+    value: SubmissionType
+}[] = [
+    { label: RECIPE_TITLE, value: SubmissionType.Recipe },
+    { label: TIPS_TITLE, value: SubmissionType.CulinaryTip },
+]
 
 const SubmissionsView = () => {
     const router = useRouter()
@@ -81,18 +90,6 @@ const SubmissionsView = () => {
             : setContent(tips || [])
     }
 
-    const submissionTypes = useMemo((): {
-        label: string
-        value: SubmissionType
-    }[] => {
-        return (
-            Object.keys(SubmissionType) as (keyof typeof SubmissionType)[]
-        ).map((key) => ({
-            label: key,
-            value: SubmissionType[key],
-        }))
-    }, [])
-
     return (
         <div className="mx-16 mt-8">
             <h1 className="text-4xl">{capitalize(status)} submissions</h1>
@@ -107,7 +104,7 @@ const SubmissionsView = () => {
                         },
                     }}
                 >
-                    {submissionTypes.map(({ label, value }) => (
+                    {TabsInfo.map(({ label, value }) => (
                         <Tab key={label} label={label} value={value} />
                     ))}
                 </Tabs>
@@ -119,8 +116,16 @@ const SubmissionsView = () => {
                             <TableCell align="center">No.</TableCell>
                             <TableCell>Title</TableCell>
                             <TableCell align="center">Type</TableCell>
-                            <TableCell align="center">Created at</TableCell>
-                            <TableCell align="center">Updated at</TableCell>
+                            <TableCell align="center">
+                                <div className="text-ellipsis whitespace-nowrap">
+                                    Created at
+                                </div>
+                            </TableCell>
+                            <TableCell align="center">
+                                <div className="text-ellipsis whitespace-nowrap">
+                                    Updated at
+                                </div>
+                            </TableCell>
                             <TableCell align="center">Status</TableCell>
                             <TableCell align="center">Actions</TableCell>
                         </TableRow>
@@ -141,9 +146,11 @@ const SubmissionsView = () => {
                                             align="center"
                                             sx={{ fontWeight: 600 }}
                                         >
-                                            {isRecipe
-                                                ? SubmissionType.Recipe
-                                                : SubmissionType.CulinaryTip}
+                                            <div className="text-ellipsis whitespace-nowrap">
+                                                {isRecipe
+                                                    ? RECIPE_TITLE
+                                                    : TIPS_TITLE}
+                                            </div>
                                         </TableCell>
                                         <TableCell align="center">
                                             TBD
@@ -155,14 +162,18 @@ const SubmissionsView = () => {
                                             {content.status}
                                         </TableCell>
                                         <TableCell align="center">
-                                            <a
-                                                className="text-cinfo cursor-pointer hover:underline"
-                                                onClick={() =>
-                                                    handleViewDetails(content)
-                                                }
-                                            >
-                                                View details
-                                            </a>
+                                            <div className="text-ellipsis whitespace-nowrap">
+                                                <a
+                                                    className="text-cinfo cursor-pointer hover:underline"
+                                                    onClick={() =>
+                                                        handleViewDetails(
+                                                            content
+                                                        )
+                                                    }
+                                                >
+                                                    View details
+                                                </a>
+                                            </div>
                                         </TableCell>
                                     </TableRow>
                                 )

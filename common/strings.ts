@@ -63,7 +63,12 @@ export const REVIEW_MESSAGE_TOO_SHORT =
 export const REVIEW_MESSAGE_TOO_LONG =
     'Lời nhắn giải thích lí do từ chối quá dài, tối đa 500 kí tư'
 
+// Navbar
 export const NAVBAR_PENDING = 'Đang chờ duyệt'
 export const NAVBAR_HISTORY = 'Lịch sử'
 export const NAVBAR_REPORTED = 'Báo cáo'
 export const NAVBAR_LOGOUT = 'Đăng xuất'
+
+// Submissions
+export const RECIPE_TITLE = 'Công thức'
+export const TIPS_TITLE = 'Mẹo vặt'
