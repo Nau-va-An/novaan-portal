@@ -8,10 +8,11 @@ export const COMMON_SERVER_CONNECTION_FAIL_ERROR =
     'Hiện đang không thể kết nối được với server, xin vui lòng thử lại sau'
 
 // Authentication
-export const AUTH_EMAIL_INVALID = '*Tên đăng nhập hoặc email không hợp lệ'
+export const AUTH_EMAIL_INVALID = '*Email không hợp lệ'
 export const AUTH_PASSWORD_TOO_SHORT = '*Mật khẩu phải dài ít nhất 8 kí tự'
 export const AUTH_NAME_INVALID =
     '*Tên hiện thị chỉ bao gồm chữ hoa, chữ thường và dẫu cách giữa các từ'
+export const AUTH_FAILED = 'Email admin hoặc mật khẩu không chính xác'
 
 // Sign in screen
 export const SIGN_IN_GREETING = 'Xin chào'
@@ -61,3 +62,22 @@ export const REVIEW_MESSAGE_TOO_SHORT =
     'Lời nhắn giải thích lí do từ chối quá ngắn, cần ít nhất 30 kí tự'
 export const REVIEW_MESSAGE_TOO_LONG =
     'Lời nhắn giải thích lí do từ chối quá dài, tối đa 500 kí tư'
+
+// Navbar
+export const NAVBAR_PENDING = 'Đang chờ duyệt'
+export const NAVBAR_HISTORY = 'Lịch sử'
+export const NAVBAR_REPORTED = 'Báo cáo'
+export const NAVBAR_LOGOUT = 'Đăng xuất'
+
+// Submissions
+export const RECIPE_TITLE = 'Công thức'
+export const TIPS_TITLE = 'Mẹo vặt'
+
+export const EMPTY_PENDING_RECIPE =
+    'Hiện tại chưa có công thức mới cần kiểm duyệt'
+export const EMPTY_PENDING_TIPS = 'Hiện tại chưa có mẹo vặt mới cần kiểm duyệt'
+
+export const EMPTY_HISTORY_RECIPE = 'Lịch sử kiểm duyệt công thức đang trống'
+export const EMPTY_HISTORY_TIPS = 'Lịch sử kiểm duyệt mẹo vặt đang trống'
+
+export const EMPTY_REPORT = 'Chưa có nội dung nào bị báo cáo'

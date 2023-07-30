@@ -1,11 +1,6 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import {
-    CulinaryTips,
-    Recipe,
-    Status,
-    SubmissionType,
-} from './types/submission'
+import { CulinaryTips, Recipe, SubmissionType } from './types/submission'
 import { useFetchSubmissions } from './services/submissions.service'
 import { capitalize } from 'lodash'
 import {
@@ -19,13 +14,36 @@ import {
     Tabs,
     Tab,
     Box,
+    colors,
 } from '@mui/material'
 import { customColors } from '@/tailwind.config'
+import {
+    EMPTY_HISTORY_RECIPE,
+    EMPTY_HISTORY_TIPS,
+    EMPTY_PENDING_RECIPE,
+    EMPTY_PENDING_TIPS,
+    EMPTY_REPORT,
+    RECIPE_TITLE,
+    TIPS_TITLE,
+} from '@/common/strings'
+import InventoryOutlinedIcon from '@mui/icons-material/InventoryOutlined'
+import HistoryOutlinedIcon from '@mui/icons-material/HistoryOutlined'
+import FlagOutlinedIcon from '@mui/icons-material/FlagOutlined'
+import EmptyContent from '@/components/submissions/EmptyContent'
+import { TabStatus } from '@/components/common/navbar/Navbar'
+
+const TabsInfo: {
+    label: string
+    value: SubmissionType
+}[] = [
+    { label: RECIPE_TITLE, value: SubmissionType.Recipe },
+    { label: TIPS_TITLE, value: SubmissionType.CulinaryTip },
+]
 
 const SubmissionsView = () => {
     const router = useRouter()
 
-    const [status, setStatus] = useState<string>()
+    const [status, setStatus] = useState<TabStatus>()
     const [content, setContent] = useState<(Recipe | CulinaryTips)[]>()
     const [currentTab, setCurrentTab] = useState(SubmissionType.Recipe)
 
@@ -42,7 +60,7 @@ const SubmissionsView = () => {
         if (currentStatus == null || currentStatus.length === 0) {
             return
         }
-        setStatus(currentStatus)
+        setStatus(currentStatus as TabStatus)
     }, [router.query.status])
 
     useEffect(() => {
@@ -81,18 +99,6 @@ const SubmissionsView = () => {
             : setContent(tips || [])
     }
 
-    const submissionTypes = useMemo((): {
-        label: string
-        value: SubmissionType
-    }[] => {
-        return (
-            Object.keys(SubmissionType) as (keyof typeof SubmissionType)[]
-        ).map((key) => ({
-            label: key,
-            value: SubmissionType[key],
-        }))
-    }, [])
-
     return (
         <div className="mx-16 mt-8">
             <h1 className="text-4xl">{capitalize(status)} submissions</h1>
@@ -107,27 +113,35 @@ const SubmissionsView = () => {
                         },
                     }}
                 >
-                    {submissionTypes.map(({ label, value }) => (
+                    {TabsInfo.map(({ label, value }) => (
                         <Tab key={label} label={label} value={value} />
                     ))}
                 </Tabs>
             </Box>
-            <TableContainer component={Paper} className="mx-auto mt-2">
-                <Table size="small">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell align="center">No.</TableCell>
-                            <TableCell>Title</TableCell>
-                            <TableCell align="center">Type</TableCell>
-                            <TableCell align="center">Created at</TableCell>
-                            <TableCell align="center">Updated at</TableCell>
-                            <TableCell align="center">Status</TableCell>
-                            <TableCell align="center">Actions</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {content &&
-                            content.map((content, index) => {
+            {content && content.length > 0 && (
+                <TableContainer component={Paper} className="mx-auto mt-2">
+                    <Table size="small">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell align="center">No.</TableCell>
+                                <TableCell>Title</TableCell>
+                                <TableCell align="center">Type</TableCell>
+                                <TableCell align="center">
+                                    <div className="text-ellipsis whitespace-nowrap">
+                                        Created at
+                                    </div>
+                                </TableCell>
+                                <TableCell align="center">
+                                    <div className="text-ellipsis whitespace-nowrap">
+                                        Updated at
+                                    </div>
+                                </TableCell>
+                                <TableCell align="center">Status</TableCell>
+                                <TableCell align="center">Actions</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {content.map((content, index) => {
                                 const isRecipe = 'instructions' in content
                                 return (
                                     <TableRow key={content.id}>
@@ -141,9 +155,11 @@ const SubmissionsView = () => {
                                             align="center"
                                             sx={{ fontWeight: 600 }}
                                         >
-                                            {isRecipe
-                                                ? SubmissionType.Recipe
-                                                : SubmissionType.CulinaryTip}
+                                            <div className="text-ellipsis whitespace-nowrap">
+                                                {isRecipe
+                                                    ? RECIPE_TITLE
+                                                    : TIPS_TITLE}
+                                            </div>
                                         </TableCell>
                                         <TableCell align="center">
                                             TBD
@@ -155,21 +171,66 @@ const SubmissionsView = () => {
                                             {content.status}
                                         </TableCell>
                                         <TableCell align="center">
-                                            <a
-                                                className="text-cinfo cursor-pointer hover:underline"
-                                                onClick={() =>
-                                                    handleViewDetails(content)
-                                                }
-                                            >
-                                                View details
-                                            </a>
+                                            <div className="text-ellipsis whitespace-nowrap">
+                                                <a
+                                                    className="text-cinfo cursor-pointer hover:underline"
+                                                    onClick={() =>
+                                                        handleViewDetails(
+                                                            content
+                                                        )
+                                                    }
+                                                >
+                                                    View details
+                                                </a>
+                                            </div>
                                         </TableCell>
                                     </TableRow>
                                 )
                             })}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            )}
+            {content && content.length <= 0 && (
+                <div className="mt-16">
+                    {status === 'pending' && (
+                        <EmptyContent
+                            label={
+                                currentTab === SubmissionType.Recipe
+                                    ? EMPTY_PENDING_RECIPE
+                                    : EMPTY_PENDING_TIPS
+                            }
+                        >
+                            <InventoryOutlinedIcon
+                                fontSize="inherit"
+                                htmlColor={colors.grey[500]}
+                            />
+                        </EmptyContent>
+                    )}
+                    {status === 'history' && (
+                        <EmptyContent
+                            label={
+                                currentTab === SubmissionType.Recipe
+                                    ? EMPTY_HISTORY_RECIPE
+                                    : EMPTY_HISTORY_TIPS
+                            }
+                        >
+                            <HistoryOutlinedIcon
+                                fontSize="inherit"
+                                htmlColor={colors.grey[500]}
+                            />
+                        </EmptyContent>
+                    )}
+                    {status === 'reported' && (
+                        <EmptyContent label={EMPTY_REPORT}>
+                            <FlagOutlinedIcon
+                                fontSize="inherit"
+                                htmlColor={colors.grey[500]}
+                            />
+                        </EmptyContent>
+                    )}
+                </div>
+            )}
         </div>
     )
 }

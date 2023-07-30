@@ -1,16 +1,21 @@
 import {
     AUTH_EMAIL_INVALID,
+    AUTH_FAILED,
     AUTH_PASSWORD_TOO_SHORT,
     COMMON_EMPTY_FIELD_NOT_ALLOWED,
 } from '@/common/strings'
 import ErrText from '@/components/common/ErrText'
 import { snowflakeCursor } from '@/utils/fun/SnowFlake'
 import { useRouter } from 'next/router'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Toaster, toast } from 'react-hot-toast'
 import { useSignIn } from './services/auth.service'
 import { ACCESS_TOKEN_STORAGE_KEY } from '@/common/constants'
+import { getTokenPayload } from '@/common/utils/jwtoken'
+import { AuthToken } from '@/common/types/token.type'
+import BadRequestError from '@/common/errors/BadRequest'
+import { throttle } from 'lodash'
 
 type SignInData = {
     email: string
@@ -34,6 +39,31 @@ const SignIn = () => {
 
     const { token, signInWithPayload } = useSignIn()
 
+    const handleSignIn = useCallback(
+        throttle(
+            async (data: SignInData): Promise<void> => {
+                try {
+                    const payload = {
+                        email: data.email,
+                        password: data.password,
+                    }
+                    await signInWithPayload(payload)
+                } catch (err) {
+                    if (err instanceof BadRequestError) {
+                        notifyErr(AUTH_FAILED)
+                    }
+                }
+            },
+            2000,
+            { leading: true }
+        ),
+        []
+    )
+
+    const onSignIn = async (data: SignInData): Promise<void> => {
+        await handleSignIn(data)
+    }
+
     useEffect(() => {
         // Enable to see something funny
         // snowflakeCursor();
@@ -43,31 +73,20 @@ const SignIn = () => {
         if (token == null || token === '') {
             return
         }
+
+        // Reject the request if user trying to signin
+        const payload = getTokenPayload<AuthToken>(token)
+        if (payload.urole === 'User') {
+            notifyErr('Người dùng không được phép đăng nhập vào Admin Portal')
+            return
+        }
+
         localStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, token)
         router.push('/submissions/pending')
     }, [token, router])
 
     const notifyErr = (message: string): void => {
-        toast.error(message)
-    }
-
-    const redirectToSubmissions = () => {
-        router.push('/submissions/pending')
-    }
-
-    const onSignIn = async (data: SignInData): Promise<void> => {
-        setLoading(true)
-        try {
-            const payload = {
-                email: data.email,
-                password: data.password,
-            }
-            await signInWithPayload(payload)
-        } catch (err) {
-            notifyErr(err.message)
-        } finally {
-            setLoading(false)
-        }
+        toast.error(message, { duration: 2000 })
     }
 
     return (
@@ -77,7 +96,7 @@ const SignIn = () => {
             </div>
             <form
                 onSubmit={handleSubmit(onSignIn)}
-                className="w-1/3 mt-12 flex flex-col items-center justify-center"
+                className="w-2/3 max-w-xl mt-12 flex flex-col items-center justify-center"
             >
                 <div className="flex flex-col w-full">
                     <label htmlFor="email">Email</label>
@@ -89,7 +108,7 @@ const SignIn = () => {
                         {...register('email', {
                             required: true,
                             pattern:
-                                /^\w+([.-]?\w+)*(@\w+([.-]?\w+)*(\.\w{2,3})+)?$/,
+                                /^\w+([.-]?\w+)*(@\w+([.-]?\w+)*\.\w{2,3})+$/,
                         })}
                     />
                     <div className="mt-2">
@@ -124,6 +143,7 @@ const SignIn = () => {
                     Sign In
                 </button>
             </form>
+            <Toaster />
         </div>
     )
 }
