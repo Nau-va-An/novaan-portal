@@ -72,3 +72,6 @@ export const NAVBAR_LOGOUT = 'Đăng xuất'
 // Submissions
 export const RECIPE_TITLE = 'Công thức'
 export const TIPS_TITLE = 'Mẹo vặt'
+export const EMPTY_PENDING_RECIPE =
+    'Hiện tại chưa có công thức mới cần kiểm duyệt'
+export const EMPTY_PENDING_TIPS = 'Hiện tại chưa có mẹo vặt mới cần kiểm duyệt'

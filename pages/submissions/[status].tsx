@@ -21,7 +21,13 @@ import {
     Box,
 } from '@mui/material'
 import { customColors } from '@/tailwind.config'
-import { RECIPE_TITLE, TIPS_TITLE } from '@/common/strings'
+import {
+    EMPTY_PENDING_RECIPE,
+    EMPTY_PENDING_TIPS,
+    RECIPE_TITLE,
+    TIPS_TITLE,
+} from '@/common/strings'
+import EmptyContent from '@/components/submissions/EmptyContent'
 
 const TabsInfo: {
     label: string
@@ -109,30 +115,30 @@ const SubmissionsView = () => {
                     ))}
                 </Tabs>
             </Box>
-            <TableContainer component={Paper} className="mx-auto mt-2">
-                <Table size="small">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell align="center">No.</TableCell>
-                            <TableCell>Title</TableCell>
-                            <TableCell align="center">Type</TableCell>
-                            <TableCell align="center">
-                                <div className="text-ellipsis whitespace-nowrap">
-                                    Created at
-                                </div>
-                            </TableCell>
-                            <TableCell align="center">
-                                <div className="text-ellipsis whitespace-nowrap">
-                                    Updated at
-                                </div>
-                            </TableCell>
-                            <TableCell align="center">Status</TableCell>
-                            <TableCell align="center">Actions</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {content &&
-                            content.map((content, index) => {
+            {content.length > 0 && (
+                <TableContainer component={Paper} className="mx-auto mt-2">
+                    <Table size="small">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell align="center">No.</TableCell>
+                                <TableCell>Title</TableCell>
+                                <TableCell align="center">Type</TableCell>
+                                <TableCell align="center">
+                                    <div className="text-ellipsis whitespace-nowrap">
+                                        Created at
+                                    </div>
+                                </TableCell>
+                                <TableCell align="center">
+                                    <div className="text-ellipsis whitespace-nowrap">
+                                        Updated at
+                                    </div>
+                                </TableCell>
+                                <TableCell align="center">Status</TableCell>
+                                <TableCell align="center">Actions</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {content.map((content, index) => {
                                 const isRecipe = 'instructions' in content
                                 return (
                                     <TableRow key={content.id}>
@@ -178,9 +184,21 @@ const SubmissionsView = () => {
                                     </TableRow>
                                 )
                             })}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            )}
+            {content.length <= 0 && (
+                <div className="mt-16">
+                    <EmptyContent
+                        label={
+                            currentTab === SubmissionType.Recipe
+                                ? EMPTY_PENDING_RECIPE
+                                : EMPTY_PENDING_TIPS
+                        }
+                    />
+                </div>
+            )}
         </div>
     )
 }
