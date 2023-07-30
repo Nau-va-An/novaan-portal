@@ -14,11 +14,13 @@ import {
     NAVBAR_LOGOUT,
     NAVBAR_PENDING,
     NAVBAR_REPORTED,
-} from '../../strings'
+} from '../../../common/strings'
 import { useMemo } from 'react'
 import NavbarButton from './NavbarButton'
 import NavbarRouteButton, { NavbarItem } from './NavbarRouteButton'
 import { ACCESS_TOKEN_STORAGE_KEY } from '@/common/constants'
+
+export type TabStatus = 'pending' | 'history' | 'reported'
 
 const Navbar = () => {
     const router = useRouter()

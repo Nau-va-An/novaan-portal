@@ -12,7 +12,7 @@ import {
     Typography,
 } from '@mui/material'
 import { customColors } from '@/tailwind.config'
-import Navbar from '@/common/components/navbar/Navbar'
+import Navbar from '@/components/common/navbar/Navbar'
 import { Toaster } from 'react-hot-toast'
 
 const inter = Inter({ subsets: ['latin'] })
