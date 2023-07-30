@@ -12,6 +12,7 @@ export const AUTH_EMAIL_INVALID = '*Email không hợp lệ'
 export const AUTH_PASSWORD_TOO_SHORT = '*Mật khẩu phải dài ít nhất 8 kí tự'
 export const AUTH_NAME_INVALID =
     '*Tên hiện thị chỉ bao gồm chữ hoa, chữ thường và dẫu cách giữa các từ'
+export const AUTH_FAILED = 'Email admin hoặc mật khẩu không chính xác'
 
 // Sign in screen
 export const SIGN_IN_GREETING = 'Xin chào'
