@@ -25,6 +25,11 @@ export type TabStatus = 'pending' | 'history' | 'reported'
 const Navbar = () => {
     const router = useRouter()
 
+    const isAtSignIn = useMemo(
+        () => router.pathname === '/auth/signin',
+        [router]
+    )
+
     const navbarItems: NavbarItem[] = useMemo(
         () => [
             {
@@ -60,12 +65,14 @@ const Navbar = () => {
                         <NavbarRouteButton key={item.label} {...item} />
                     ))}
                 </div>
-                <div className="flex justify-end">
-                    <NavbarButton
-                        label={NAVBAR_LOGOUT}
-                        onPress={handleLogout}
-                    />
-                </div>
+                {!isAtSignIn && (
+                    <div className="flex justify-end">
+                        <NavbarButton
+                            label={NAVBAR_LOGOUT}
+                            onPress={handleLogout}
+                        />
+                    </div>
+                )}
             </div>
         </AppBar>
     )
