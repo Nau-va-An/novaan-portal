@@ -221,14 +221,6 @@ const SubmissionsView = () => {
                             />
                         </EmptyContent>
                     )}
-                    {status === 'reported' && (
-                        <EmptyContent label={EMPTY_REPORT}>
-                            <FlagOutlinedIcon
-                                fontSize="inherit"
-                                htmlColor={colors.grey[500]}
-                            />
-                        </EmptyContent>
-                    )}
                 </div>
             )}
         </div>

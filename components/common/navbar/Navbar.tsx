@@ -42,14 +42,13 @@ const Navbar = () => {
                 query: ['approved', 'rejected'],
                 mask: '/submissions/history',
             },
-            {
-                label: NAVBAR_REPORTED,
-                query: ['reported'],
-                mask: '/submissions/reported',
-            },
         ],
         []
     )
+
+    const handleViewReported = (): void => {
+        router.push('/reported')
+    }
 
     const handleLogout = (): void => {
         // TODO: Send request to server to invalidate current valid token
@@ -64,6 +63,10 @@ const Navbar = () => {
                     {navbarItems.map((item) => (
                         <NavbarRouteButton key={item.label} {...item} />
                     ))}
+                    <NavbarButton
+                        label="Báo cáo"
+                        onPress={handleViewReported}
+                    />
                 </div>
                 {!isAtSignIn && (
                     <div className="flex justify-end">

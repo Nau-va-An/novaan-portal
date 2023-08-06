@@ -4,8 +4,10 @@ import {
     Status,
     SubmissionType,
 } from '@/pages/submissions/types/submission'
-import { useFetch } from '@/common/baseApi'
+import { responseObjectValid, useFetch } from '@/common/baseApi'
 import { useCallback, useEffect, useState } from 'react'
+import useSwr from 'swr'
+import { ReportedContent } from './submission.type'
 
 export interface SubmissionsResponse {
     recipes: Recipe[]
@@ -89,4 +91,9 @@ export const useUpdateSubmission = () => {
     )
 
     return { updateSubmission }
+}
+
+export const useReportedContent = () => {
+    const { getReq } = useFetch({ authorizationRequired: true, timeout: 5000 })
+    return useSwr<ReportedContent[]>('content/reported', getReq)
 }
