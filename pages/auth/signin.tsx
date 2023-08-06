@@ -16,6 +16,7 @@ import { getTokenPayload } from '@/common/utils/jwtoken'
 import { AuthToken } from '@/common/types/token.type'
 import BadRequestError from '@/common/errors/BadRequest'
 import { throttle } from 'lodash'
+import moment from 'moment'
 
 type SignInData = {
     email: string
@@ -64,9 +65,27 @@ const SignIn = () => {
         await handleSignIn(data)
     }
 
+    const onSuccessfulSignIn = () => {
+        router.push('/submissions/pending')
+    }
+
     useEffect(() => {
         // Enable to see something funny
         // snowflakeCursor();
+
+        // Persistent sign in
+        const token = localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY)
+        const payload = getTokenPayload<AuthToken>(token)
+
+        console.log('payload', payload)
+
+        // Check exp and redirect if needed
+        const isExpired = moment().diff(moment.unix(payload.exp)) >= 0
+        if (isExpired) {
+            return
+        }
+
+        onSuccessfulSignIn()
     }, [])
 
     useEffect(() => {
@@ -82,7 +101,7 @@ const SignIn = () => {
         }
 
         localStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, token)
-        router.push('/submissions/pending')
+        onSuccessfulSignIn()
     }, [token, router])
 
     const notifyErr = (message: string): void => {
