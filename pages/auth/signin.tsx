@@ -75,9 +75,13 @@ const SignIn = () => {
 
         // Persistent sign in
         const token = localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY)
+        if (token == null) {
+            return
+        }
         const payload = getTokenPayload<AuthToken>(token)
-
-        console.log('payload', payload)
+        if (payload == null) {
+            return
+        }
 
         // Check exp and redirect if needed
         const isExpired = moment().diff(moment.unix(payload.exp)) >= 0
