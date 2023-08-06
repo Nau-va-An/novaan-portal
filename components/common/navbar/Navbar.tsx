@@ -25,6 +25,11 @@ export type TabStatus = 'pending' | 'history' | 'reported'
 const Navbar = () => {
     const router = useRouter()
 
+    const isAtSignIn = useMemo(
+        () => router.pathname === '/auth/signin',
+        [router]
+    )
+
     const navbarItems: NavbarItem[] = useMemo(
         () => [
             {
@@ -37,14 +42,13 @@ const Navbar = () => {
                 query: ['approved', 'rejected'],
                 mask: '/submissions/history',
             },
-            {
-                label: NAVBAR_REPORTED,
-                query: ['reported'],
-                mask: '/submissions/reported',
-            },
         ],
         []
     )
+
+    const handleViewReported = (): void => {
+        router.push('/reported')
+    }
 
     const handleLogout = (): void => {
         // TODO: Send request to server to invalidate current valid token
@@ -59,13 +63,19 @@ const Navbar = () => {
                     {navbarItems.map((item) => (
                         <NavbarRouteButton key={item.label} {...item} />
                     ))}
-                </div>
-                <div className="flex justify-end">
                     <NavbarButton
-                        label={NAVBAR_LOGOUT}
-                        onPress={handleLogout}
+                        label="Báo cáo"
+                        onPress={handleViewReported}
                     />
                 </div>
+                {!isAtSignIn && (
+                    <div className="flex justify-end">
+                        <NavbarButton
+                            label={NAVBAR_LOGOUT}
+                            onPress={handleLogout}
+                        />
+                    </div>
+                )}
             </div>
         </AppBar>
     )

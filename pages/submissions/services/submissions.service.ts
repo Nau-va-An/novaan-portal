@@ -1,21 +1,29 @@
 import {
-    CulinaryTips,
+    CulinaryTip,
     Recipe,
     Status,
     SubmissionType,
 } from '@/pages/submissions/types/submission'
-import { useFetch } from '@/common/baseApi'
+import { responseObjectValid, useFetch } from '@/common/baseApi'
 import { useCallback, useEffect, useState } from 'react'
+import useSwr from 'swr'
+import { ReportedContent } from './submission.type'
+import { Undefinable } from '@/common/types/types'
 
 export interface SubmissionsResponse {
     recipes: Recipe[]
-    culinaryTips: CulinaryTips[]
+    culinaryTips: CulinaryTip[]
 }
 
 interface UpdateSubmissionRequest {
     postId: string
     status: Status
     adminComment: string
+}
+
+interface GetPostDetailsPayload {
+    id: string
+    postType: SubmissionType
 }
 
 export const useFetchSubmissions = () => {
@@ -25,7 +33,7 @@ export const useFetchSubmissions = () => {
     })
 
     const [recipes, setRecipes] = useState<Recipe[]>([])
-    const [tips, setTips] = useState<CulinaryTips[]>([])
+    const [tips, setTips] = useState<CulinaryTip[]>([])
 
     const fetchContent = useCallback(
         async (status: string) => {
@@ -55,7 +63,7 @@ export const useUpdateSubmission = () => {
     })
 
     const isRecipe = useCallback(
-        (content: Recipe | CulinaryTips): content is Recipe => {
+        (content: Recipe | CulinaryTip): content is Recipe => {
             return 'ingredients' in content
         },
         []
@@ -63,7 +71,7 @@ export const useUpdateSubmission = () => {
 
     const updateSubmission = useCallback(
         async (
-            content: Recipe | CulinaryTips,
+            content: Recipe | CulinaryTip,
             status: Status,
             message?: string
         ): Promise<void> => {
@@ -89,4 +97,37 @@ export const useUpdateSubmission = () => {
     )
 
     return { updateSubmission }
+}
+
+export const useReportedContent = () => {
+    const { getReq } = useFetch({ authorizationRequired: true, timeout: 5000 })
+    return useSwr<ReportedContent[]>('content/reported', getReq)
+}
+
+export const usePostDetails = () => {
+    const { getReq } = useFetch({ authorizationRequired: true, timeout: 5000 })
+
+    const getRecipeDetails = async (
+        id: string
+    ): Promise<Undefinable<Recipe>> => {
+        const response = await getReq(`content/post/recipe/${id}`)
+        if (!responseObjectValid(response)) {
+            return undefined
+        }
+
+        return response
+    }
+
+    const getTipDetails = async (
+        id: string
+    ): Promise<Undefinable<CulinaryTip>> => {
+        const response = await getReq(`content/post/tip/${id}`)
+        if (!responseObjectValid(response)) {
+            return undefined
+        }
+
+        return response
+    }
+
+    return { getRecipeDetails, getTipDetails }
 }

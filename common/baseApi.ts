@@ -21,6 +21,16 @@ enum HttpMethod {
     DELETE = 'DELETE',
 }
 
+export const responseObjectValid = (target: any): boolean => {
+    if (typeof target !== 'object' || target == null) {
+        return false
+    }
+    if (target.success != null && target.success === false) {
+        return false
+    }
+    return true
+}
+
 const defaultConfig: RequestConfig = {
     timeout: DEFAULT_API_TIMEOUT,
     authorizationRequired: false,

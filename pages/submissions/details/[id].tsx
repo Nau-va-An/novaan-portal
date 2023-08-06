@@ -1,6 +1,6 @@
 import router, { useRouter } from 'next/router'
 import React, { useCallback, useEffect, useState } from 'react'
-import { CulinaryTips, Recipe, Status } from '../types/submission'
+import { CulinaryTip, Recipe, Status } from '../types/submission'
 import { capitalize } from 'lodash'
 import ReactPlayer from 'react-player'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
@@ -17,7 +17,7 @@ import toast from 'react-hot-toast'
 const SubmissionDetails = () => {
     const { query, isReady } = useRouter()
 
-    const [content, setContent] = useState<Recipe | CulinaryTips>(null)
+    const [content, setContent] = useState<Recipe | CulinaryTip>(null)
     const [videoUrl, setVideoUrl] = useState('')
 
     const [reviewOpen, setReviewOpen] = useState(false)
@@ -73,7 +73,7 @@ const SubmissionDetails = () => {
     }
 
     const isRecipe = useCallback(
-        (content: Recipe | CulinaryTips): content is Recipe => {
+        (content: Recipe | CulinaryTip): content is Recipe => {
             return 'ingredients' in content
         },
         []
