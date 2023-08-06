@@ -8,6 +8,16 @@ import {
 } from './constants'
 import { config } from 'dotenv'
 import BadRequestError from './errors/BadRequest'
+import { Undefinable } from './types/types'
+import { getTokenPayload } from './utils/jwtoken'
+import { AuthToken } from './types/token.type'
+import moment from 'moment'
+
+// GLOBAL IN-MEMORY VARIABLE (DO NOT TOUCH)
+let tokenExpTimestamp: number = -1
+let currentToken = ''
+
+const REFRESH = 'auth/refreshtoken'
 
 interface RequestConfig {
     timeout: number
@@ -36,6 +46,73 @@ const defaultConfig: RequestConfig = {
     authorizationRequired: false,
 }
 
+const isTimestampExpired = (exp: number): boolean => {
+    return moment.unix(exp).diff(moment()) <= 5000
+}
+
+const getNewTokenIfExpired = async (currentToken: string): Promise<string> => {
+    let exp = tokenExpTimestamp
+
+    // If there are no cache exp, read exp from currentToken (and cache that)
+    if (exp < 0) {
+        const tokenPayload = getTokenPayload<AuthToken>(currentToken)
+
+        if (tokenPayload.exp == null) {
+            throw new UnauthorizedError()
+        }
+        exp = Number(tokenPayload.exp)
+        tokenExpTimestamp = exp
+    }
+
+    if (isTimestampExpired(exp)) {
+        // Try to refresh token
+        const newToken = await refreshToken(currentToken)
+        if (newToken == null) {
+            throw new UnauthorizedError()
+        }
+
+        // Save new token into keychain store
+        localStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, newToken)
+
+        // Cache new token exp into device memory
+        const newPayload = getTokenPayload<AuthToken>(newToken)
+        tokenExpTimestamp = Number(newPayload.exp)
+
+        return newToken
+    }
+
+    // Return currentToken if it is still usable
+    return currentToken
+}
+
+const refreshToken = async (oldToken: string): Promise<Undefinable<string>> => {
+    const headers = new Headers()
+    headers.append('Content-Type', 'application/json')
+    headers.append('Accept', 'application/json')
+    headers.append(
+        'Access-Control-Allow-Headers',
+        'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+    )
+    headers.append('Authorization', `Bearer ${oldToken}`)
+
+    const response = await fetch(`${DEFAULT_API_URL}${REFRESH}`, {
+        headers,
+        body: '{}',
+        method: 'POST',
+    })
+    if (!response.ok) {
+        return undefined
+    }
+
+    const body = await response.json()
+
+    if (!responseObjectValid(body)) {
+        return undefined
+    }
+
+    return body.token as string
+}
+
 const getHeaders = async (
     accessTokenRequired: boolean = false
 ): Promise<Headers> => {
@@ -50,11 +127,14 @@ const getHeaders = async (
 
     if (accessTokenRequired) {
         // Get access token from secure storage
-        const accessToken = localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY)
-        if (accessToken == null) {
+        let currentToken = localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY)
+        if (currentToken == null) {
             throw new UnauthorizedError()
         }
-        headers.append('Authorization', `Bearer ${accessToken}`)
+
+        // Check current token before sending request
+        currentToken = await getNewTokenIfExpired(currentToken)
+        headers.append('Authorization', `Bearer ${currentToken}`)
     }
 
     return headers
