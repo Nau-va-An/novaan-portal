@@ -21,10 +21,11 @@ import {
 import { capitalize } from 'lodash'
 import React, { useEffect, useMemo, useState } from 'react'
 import style from 'styled-jsx/style'
-import { useReportedContent } from './submissions/services/submissions.service'
+import { useReportedContent } from '../submissions/services/submissions.service'
 import EmptyContent from '@/components/submissions/EmptyContent'
 import FlagOutlinedIcon from '@mui/icons-material/FlagOutlined'
-import { ReportedContent } from './submissions/services/submission.type'
+import { ReportedContent } from '../submissions/services/submission.type'
+import { useRouter } from 'next/router'
 
 export type TabValue = 'Recipe' | 'CulinaryTip' | 'Comments'
 
@@ -40,6 +41,8 @@ const TabsInfo: TabsInfoItem[] = [
 ]
 
 const ReportedSubmissionView = () => {
+    const router = useRouter()
+
     const [currentTab, setCurrentTab] = useState<TabValue>('Recipe')
 
     const { data } = useReportedContent()
@@ -94,7 +97,18 @@ const ReportedSubmissionView = () => {
     }
 
     const handleViewDetails = (content: ReportedContent) => {
-        console.log(content)
+        // Push data to with router to show details
+        const payload = JSON.stringify(content)
+        router.push(
+            {
+                pathname: '/reported/details',
+                query: {
+                    contentType: currentTab,
+                    content: payload,
+                },
+            },
+            '/reported/details'
+        )
     }
 
     return (
@@ -142,13 +156,13 @@ const ReportedSubmissionView = () => {
                                     className="w-12 text-ellipsis whitespace-nowrap"
                                     align="center"
                                 >
-                                    Username
+                                    User Id
                                 </TableCell>
                                 <TableCell
                                     className="w-12 text-ellipsis whitespace-nowrap"
                                     align="center"
                                 >
-                                    User Id
+                                    Username
                                 </TableCell>
                             </TableRow>
                         </TableHead>
@@ -166,11 +180,11 @@ const ReportedSubmissionView = () => {
                                         <TableCell align="center">
                                             {contentType}
                                         </TableCell>
-                                        <TableCell align="center">
-                                            {content.username}
-                                        </TableCell>
-                                        <TableCell align="center">
+                                        <TableCell align="left">
                                             {content.userId}
+                                        </TableCell>
+                                        <TableCell align="left">
+                                            {content.username}
                                         </TableCell>
                                         <TableCell className="whitespace-normal break-words">
                                             {content.reason}

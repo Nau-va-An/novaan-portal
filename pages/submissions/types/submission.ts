@@ -46,7 +46,7 @@ export interface Recipe {
     updatedAt: Date
 }
 
-export interface CulinaryTips {
+export interface CulinaryTip {
     id: string
     creatorId: string
     title: string

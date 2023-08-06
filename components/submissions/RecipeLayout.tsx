@@ -1,6 +1,7 @@
 import {
     Ingredient,
     Instruction,
+    PortionType,
     Recipe,
 } from '@/pages/submissions/types/submission'
 import moment from 'moment'
@@ -57,7 +58,7 @@ export const RecipeInfoCard = ({ content }: RecipeLayoutProps) => {
             <div className="flex flex-col items-center justify-center">
                 <h2 className="text-xl">Portions</h2>
                 <p>
-                    {content.portionQuantity} {content.portionType}
+                    {content.portionQuantity} {PortionType[content.portionType]}
                 </p>
             </div>
             <div className="flex flex-col items-center justify-center">

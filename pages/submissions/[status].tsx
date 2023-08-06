@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { CulinaryTips, Recipe, SubmissionType } from './types/submission'
+import { CulinaryTip, Recipe, SubmissionType } from './types/submission'
 import { useFetchSubmissions } from './services/submissions.service'
 import { capitalize } from 'lodash'
 import {
@@ -44,7 +44,7 @@ const SubmissionsView = () => {
     const router = useRouter()
 
     const [status, setStatus] = useState<TabStatus>()
-    const [content, setContent] = useState<(Recipe | CulinaryTips)[]>()
+    const [content, setContent] = useState<(Recipe | CulinaryTip)[]>()
     const [currentTab, setCurrentTab] = useState(SubmissionType.Recipe)
 
     const { recipes, tips, fetchContent } = useFetchSubmissions()
@@ -77,7 +77,7 @@ const SubmissionsView = () => {
         setContent(recipes)
     }, [recipes, tips])
 
-    const handleViewDetails = (content: Recipe | CulinaryTips) => {
+    const handleViewDetails = (content: Recipe | CulinaryTip) => {
         // Push data to with router to show details
         const payload = JSON.stringify(content)
         router.push(
