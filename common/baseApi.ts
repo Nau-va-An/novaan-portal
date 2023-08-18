@@ -216,9 +216,16 @@ export const useFetch = (config: RequestConfig) => {
                     config,
                     body
                 )
-
-                const result = await response.json()
-                return result
+                try {
+                    const result = await response.json()
+                    return result
+                } catch {
+                    if (response.ok) {
+                        return { success: true }
+                    } else {
+                        return { success: false, statusCode: response.status }
+                    }
+                }
             } catch (error) {
                 if (handleServerError(error)) {
                     return {}
