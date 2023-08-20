@@ -17,27 +17,20 @@ import {
     colors,
 } from '@mui/material'
 import { customColors } from '@/tailwind.config'
-import {
-    EMPTY_HISTORY_RECIPE,
-    EMPTY_HISTORY_TIPS,
-    EMPTY_PENDING_RECIPE,
-    EMPTY_PENDING_TIPS,
-    EMPTY_REPORT,
-    RECIPE_TITLE,
-    TIPS_TITLE,
-} from '@/common/strings'
+import { EMPTY_HISTORY_RECIPE, EMPTY_HISTORY_TIPS } from '@/common/strings'
 import InventoryOutlinedIcon from '@mui/icons-material/InventoryOutlined'
 import HistoryOutlinedIcon from '@mui/icons-material/HistoryOutlined'
 import FlagOutlinedIcon from '@mui/icons-material/FlagOutlined'
 import EmptyContent from '@/components/submissions/EmptyContent'
 import { TabStatus } from '@/components/common/navbar/Navbar'
+import moment from 'moment'
 
 const TabsInfo: {
     label: string
     value: SubmissionType
 }[] = [
-    { label: RECIPE_TITLE, value: SubmissionType.Recipe },
-    { label: TIPS_TITLE, value: SubmissionType.CulinaryTip },
+    { label: 'Recipe', value: SubmissionType.Recipe },
+    { label: 'Culinary Tips', value: SubmissionType.CulinaryTip },
 ]
 
 const SubmissionsView = () => {
@@ -74,6 +67,8 @@ const SubmissionsView = () => {
         if (recipes == null || recipes.length === 0) {
             return
         }
+
+        setCurrentTab(SubmissionType.Recipe)
         setContent(recipes)
     }, [recipes, tips])
 
@@ -114,7 +109,12 @@ const SubmissionsView = () => {
                     }}
                 >
                     {TabsInfo.map(({ label, value }) => (
-                        <Tab key={label} label={label} value={value} />
+                        <Tab
+                            key={label}
+                            label={label}
+                            value={value}
+                            className="normal-case"
+                        />
                     ))}
                 </Tabs>
             </Box>
@@ -125,7 +125,6 @@ const SubmissionsView = () => {
                             <TableRow>
                                 <TableCell align="center">No.</TableCell>
                                 <TableCell>Title</TableCell>
-                                <TableCell align="center">Type</TableCell>
                                 <TableCell align="center">
                                     <div className="text-ellipsis whitespace-nowrap">
                                         Created at
@@ -142,7 +141,6 @@ const SubmissionsView = () => {
                         </TableHead>
                         <TableBody>
                             {content.map((content, index) => {
-                                const isRecipe = 'instructions' in content
                                 return (
                                     <TableRow key={content.id}>
                                         <TableCell align="center">
@@ -151,21 +149,15 @@ const SubmissionsView = () => {
                                         <TableCell align="left">
                                             {content.title}
                                         </TableCell>
-                                        <TableCell
-                                            align="center"
-                                            sx={{ fontWeight: 600 }}
-                                        >
-                                            <div className="text-ellipsis whitespace-nowrap">
-                                                {isRecipe
-                                                    ? RECIPE_TITLE
-                                                    : TIPS_TITLE}
-                                            </div>
+                                        <TableCell align="center">
+                                            {moment(content.createdAt).format(
+                                                'HH:mm DD-MMM-YYYY'
+                                            )}
                                         </TableCell>
                                         <TableCell align="center">
-                                            TBD
-                                        </TableCell>
-                                        <TableCell align="center">
-                                            TBD
+                                            {moment(content.updatedAt).format(
+                                                'HH:mm DD-MMM-YYYY'
+                                            )}
                                         </TableCell>
                                         <TableCell align="center">
                                             {content.status}
@@ -197,8 +189,8 @@ const SubmissionsView = () => {
                         <EmptyContent
                             label={
                                 currentTab === SubmissionType.Recipe
-                                    ? EMPTY_PENDING_RECIPE
-                                    : EMPTY_PENDING_TIPS
+                                    ? 'No recipe is pending for review at the moment'
+                                    : 'No culinary tips is pending for review at the moment'
                             }
                         >
                             <InventoryOutlinedIcon

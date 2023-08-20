@@ -35,9 +35,9 @@ interface TabsInfoItem {
 }
 
 const TabsInfo: TabsInfoItem[] = [
-    { label: RECIPE_TITLE, value: 'Recipe' },
-    { label: TIPS_TITLE, value: 'CulinaryTip' },
-    { label: COMMENT_TITLE, value: 'Comments' },
+    { label: 'Recipe', value: 'Recipe' },
+    { label: 'Culinary Tips', value: 'CulinaryTip' },
+    { label: 'Comments', value: 'Comments' },
 ]
 
 const ReportedSubmissionView = () => {
@@ -126,7 +126,12 @@ const ReportedSubmissionView = () => {
                     }}
                 >
                     {TabsInfo.map(({ label, value }) => (
-                        <Tab key={label} label={label} value={value} />
+                        <Tab
+                            key={label}
+                            label={label}
+                            value={value}
+                            className="normal-case"
+                        />
                     ))}
                 </Tabs>
             </Box>

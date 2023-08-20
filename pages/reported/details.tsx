@@ -7,8 +7,11 @@ import { content } from '@/tailwind.config'
 import { capitalize } from 'lodash'
 import { useCallback, useEffect, useState } from 'react'
 import ReactPlayer from 'react-player'
-import { Recipe, CulinaryTip } from '../submissions/types/submission'
-import { usePostDetails } from '../submissions/services/submissions.service'
+import { Recipe, CulinaryTip, Status } from '../submissions/types/submission'
+import {
+    usePostDetails,
+    useUpdateSubmission,
+} from '../submissions/services/submissions.service'
 import { useRouter } from 'next/router'
 import { TabValue } from '.'
 import { ReportedContent } from '../submissions/services/submission.type'
@@ -21,6 +24,7 @@ const ReportDetails = () => {
 
     const { getRecipeDetails, getTipDetails } = usePostDetails()
     const { getDownloadUrl } = useS3Url()
+    const { updateSubmission } = useUpdateSubmission()
 
     const [reportedContent, setReportedContent] = useState<ReportedContent>()
     const [reportedContentType, setReportedContentType] = useState<TabValue>()
@@ -28,7 +32,7 @@ const ReportDetails = () => {
     const [postDetails, setPostDetails] = useState<Recipe | CulinaryTip>()
     const [videoUrl, setVideoUrl] = useState('')
 
-    // const [reviewOpen, setReviewOpen] = useState(false)
+    const [reviewOpen, setReviewOpen] = useState(false)
 
     useEffect(() => {
         if (!isReady) {
@@ -75,7 +79,10 @@ const ReportDetails = () => {
         if (!reportedContent || !reportedContentType) {
             return
         }
-        fetchPostDetails()
+        fetchPostDetails().catch(() => {
+            toast.error('Failed to load selected post')
+            back()
+        })
     }, [reportedContent, reportedContentType])
 
     const handleGoBack = () => {
@@ -89,17 +96,23 @@ const ReportDetails = () => {
         []
     )
 
-    // const handleOpenReviewModal = () => {
-    //     setReviewOpen(true)
-    // }
+    const handleOpenReviewModal = () => {
+        setReviewOpen(true)
+    }
 
-    // const handleCloseReviewModal = () => {
-    //     setReviewOpen(false)
-    // }
+    const handleCloseReviewModal = () => {
+        setReviewOpen(false)
+    }
 
-    // const handleSubmitReview = () => {
-    //     // Do something
-    // }
+    const handleSubmitReview = async (status: Status, message?: string) => {
+        await toast.promise(updateSubmission(postDetails, status, message), {
+            loading: 'Submitting your review',
+            success: <b>Review saved</b>,
+            error: <b>Review failed. Please try again later</b>,
+        })
+
+        back()
+    }
 
     if (postDetails == null) {
         return null
@@ -112,24 +125,22 @@ const ReportDetails = () => {
                 onClick={handleGoBack}
             >
                 <ArrowBackIcon className="mr-2" />
-                <h1 className="text-2xl">Chi tiết báo cáo</h1>
+                <h1 className="text-2xl">Reports</h1>
             </div>
             <div className="mt-6">
-                <div className="text-xl font-normal">
-                    1. Chi tiết người báo cáo:
-                </div>
+                <div className="text-xl font-normal">1. Report details</div>
                 <div className="grid grid-cols-2 w-1/5">
-                    <div className="col-span-1">Id</div>
+                    <div className="col-span-1">User Id</div>
                     <div className="col-span-1">{reportedContent.userId}</div>
-                    <div className="col-span-1">Tên người dùng</div>
+                    <div className="col-span-1">Username</div>
                     <div className="col-span-1">{reportedContent.username}</div>
                 </div>
                 <div className="mt-6">
-                    <div className="text-xl">2. Lý do báo cáo</div>
+                    <div className="text-xl">2. Reason</div>
                     <div>{reportedContent.reason}</div>
                 </div>
                 <div className="mt-6">
-                    <div className="text-xl">3. Chi tiết bài viết</div>
+                    <div className="text-xl">3. Post details</div>
                 </div>
             </div>
 
@@ -167,7 +178,7 @@ const ReportDetails = () => {
             {isRecipe(postDetails) && (
                 <RecipeGuideSection content={postDetails} />
             )}
-            {/* <div className="flex items-center justify-center mt-8 mb-16">
+            <div className="flex items-center justify-center mt-8 mb-16">
                 <button
                     type="button"
                     className="px-4 py-2 bg-cprimary-300 hover:bg-cprimary-400 text-white rounded-lg"
@@ -181,7 +192,7 @@ const ReportDetails = () => {
                 currentStatus={postDetails.status}
                 handleSubmit={handleSubmitReview}
                 handleClose={handleCloseReviewModal}
-            /> */}
+            />
         </div>
     )
 }

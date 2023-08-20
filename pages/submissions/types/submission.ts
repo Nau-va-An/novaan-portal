@@ -28,34 +28,29 @@ export interface Ingredient {
     unit: string
 }
 
-export interface Recipe {
+export interface PostBase {
     id: string
     creatorId: string
     title: string
     description: string
     difficulty: Difficulty
     video: string
+    createdAt: string
+    updatedAt: string
+    status: Status
+}
+
+export interface Recipe extends PostBase {
+    difficulty: Difficulty
     portionQuantity: number
     portionType: PortionType
     prepTime: string
     cookTime: string
     instructions: Instruction[]
     ingredients: Ingredient[]
-    status: Status
-    createdAt: Date
-    updatedAt: Date
 }
 
-export interface CulinaryTip {
-    id: string
-    creatorId: string
-    title: string
-    description: string
-    video: string
-    status: Status
-    createdAt: Date
-    updatedAt: Date
-}
+export interface CulinaryTip extends PostBase {}
 
 export enum SubmissionType {
     Recipe = 'Recipe',

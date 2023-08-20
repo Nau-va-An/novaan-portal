@@ -1,5 +1,5 @@
 import router, { useRouter } from 'next/router'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { CulinaryTip, Recipe, Status } from '../types/submission'
 import { capitalize } from 'lodash'
 import ReactPlayer from 'react-player'
@@ -50,6 +50,21 @@ const SubmissionDetails = () => {
         setContent(newContent)
     }, [isReady])
 
+    const pageTitle = useMemo(() => {
+        if (content == null) {
+            return ''
+        }
+
+        if (
+            content.status.toString() === Status[Status.Pending] ||
+            content.status.toString() === Status[Status.Reported]
+        ) {
+            return content.status.toString() + ' submissions'
+        }
+
+        return 'History'
+    }, [content])
+
     const handleViewSubmissions = () => {
         router.back()
     }
@@ -90,9 +105,7 @@ const SubmissionDetails = () => {
                 onClick={handleViewSubmissions}
             >
                 <ArrowBackIcon className="mr-2" />
-                <h1 className="text-2xl">
-                    {capitalize(content.status.toString())} submissions
-                </h1>
+                <h1 className="text-2xl">{pageTitle}</h1>
             </div>
 
             <div className="mt-16 flex items-center justify-center">

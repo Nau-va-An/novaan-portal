@@ -33,12 +33,12 @@ const Navbar = () => {
     const navbarItems: NavbarItem[] = useMemo(
         () => [
             {
-                label: NAVBAR_PENDING,
+                label: 'Pending',
                 query: ['pending'],
                 mask: '/submissions/pending',
             },
             {
-                label: NAVBAR_HISTORY,
+                label: 'History',
                 query: ['approved', 'rejected'],
                 mask: '/submissions/history',
             },
@@ -64,16 +64,13 @@ const Navbar = () => {
                         <NavbarRouteButton key={item.label} {...item} />
                     ))}
                     <NavbarButton
-                        label="Báo cáo"
+                        label="Reports"
                         onPress={handleViewReported}
                     />
                 </div>
                 {!isAtSignIn && (
                     <div className="flex justify-end">
-                        <NavbarButton
-                            label={NAVBAR_LOGOUT}
-                            onPress={handleLogout}
-                        />
+                        <NavbarButton label="Sign Out" onPress={handleLogout} />
                     </div>
                 )}
             </div>
