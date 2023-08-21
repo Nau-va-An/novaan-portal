@@ -57,7 +57,7 @@ export const useFetchSubmissions = () => {
 }
 
 export const useUpdateSubmission = () => {
-    const { putReq } = useFetch({
+    const { putReq, deleteReq } = useFetch({
         authorizationRequired: true,
         timeout: 10000,
     })
@@ -96,7 +96,17 @@ export const useUpdateSubmission = () => {
         [putReq]
     )
 
-    return { updateSubmission }
+    const dismissReport = useCallback(
+        async (reportId: string) => {
+            if (reportId === '') {
+                return
+            }
+            await deleteReq(`admin/report/${reportId}`)
+        },
+        [deleteReq]
+    )
+
+    return { updateSubmission, dismissReport }
 }
 
 export const useReportedContent = () => {

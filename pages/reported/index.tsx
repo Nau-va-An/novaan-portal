@@ -98,17 +98,31 @@ const ReportedSubmissionView = () => {
 
     const handleViewDetails = (content: ReportedContent) => {
         // Push data to with router to show details
+
         const payload = JSON.stringify(content)
-        router.push(
-            {
-                pathname: '/reported/details',
-                query: {
-                    contentType: currentTab,
-                    content: payload,
+        if (content.commentId == null || content.commentId === '') {
+            router.push(
+                {
+                    pathname: '/reported/details',
+                    query: {
+                        contentType: currentTab,
+                        content: payload,
+                    },
                 },
-            },
-            '/reported/details'
-        )
+                '/reported/post/details'
+            )
+        } else {
+            router.push(
+                {
+                    pathname: '/reported/comment',
+                    query: {
+                        contentType: currentTab,
+                        content: payload,
+                    },
+                },
+                '/reported/comment/details'
+            )
+        }
     }
 
     return (
@@ -172,7 +186,7 @@ const ReportedSubmissionView = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {data.map((content, index) => {
+                            {currentContent.map((content, index) => {
                                 const contentType =
                                     content.commentId == null
                                         ? content.postType

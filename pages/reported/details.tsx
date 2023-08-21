@@ -24,12 +24,12 @@ const ReportDetails = () => {
 
     const { getRecipeDetails, getTipDetails } = usePostDetails()
     const { getDownloadUrl } = useS3Url()
-    const { updateSubmission } = useUpdateSubmission()
+    const { updateSubmission, dismissReport } = useUpdateSubmission()
 
     const [reportedContent, setReportedContent] = useState<ReportedContent>()
     const [reportedContentType, setReportedContentType] = useState<TabValue>()
 
-    const [postDetails, setPostDetails] = useState<Recipe | CulinaryTip>()
+    const [post, setPost] = useState<Recipe | CulinaryTip>()
     const [videoUrl, setVideoUrl] = useState('')
 
     const [reviewOpen, setReviewOpen] = useState(false)
@@ -77,7 +77,7 @@ const ReportDetails = () => {
                     throw new Error()
                 }
                 setVideoUrl(url)
-                setPostDetails(postDetail)
+                setPost(postDetail)
             } catch {
                 toast.error('Cannot load video from cloud store')
             }
@@ -107,16 +107,21 @@ const ReportDetails = () => {
     }
 
     const handleSubmitReview = async (status: Status, message?: string) => {
-        await toast.promise(updateSubmission(postDetails, status, message), {
+        await toast.promise(updateSubmission(post, status, message), {
             loading: 'Submitting your review',
             success: <b>Review saved</b>,
             error: <b>Review failed. Please try again later</b>,
         })
 
+        try {
+            await dismissReport(reportedContent.id)
+        } catch {
+            toast.error('There are errors when trying to dismiss report')
+        }
         router.back()
     }
 
-    if (postDetails == null) {
+    if (post == null) {
         return null
     }
 
@@ -160,28 +165,24 @@ const ReportDetails = () => {
                     {/* Content info */}
                     <div className="mt-16">
                         <div>
-                            <h2 className="text-4xl">
-                                Title: {postDetails.title}
-                            </h2>
+                            <h2 className="text-4xl">Title: {post.title}</h2>
                         </div>
                         <div className="mt-4 w-3/5">
                             <h2 className="text-2xl">Description</h2>
                             <h3 className="text-lg font-light">
-                                {postDetails.description ||
+                                {post.description ||
                                     'Someone forgot to write description 🥹'}
                             </h3>
                         </div>
                         <div className="my-8">
-                            {isRecipe(postDetails) && (
-                                <RecipeInfoCard content={postDetails} />
+                            {isRecipe(post) && (
+                                <RecipeInfoCard content={post} />
                             )}
                         </div>
                     </div>
                 </div>
             </div>
-            {isRecipe(postDetails) && (
-                <RecipeGuideSection content={postDetails} />
-            )}
+            {isRecipe(post) && <RecipeGuideSection content={post} />}
             <div className="flex items-center justify-center mt-8 mb-16">
                 <button
                     type="button"
@@ -193,7 +194,7 @@ const ReportDetails = () => {
             </div>
             <ReviewModal
                 isOpen={reviewOpen}
-                currentStatus={postDetails.status}
+                currentStatus={post.status}
                 handleSubmit={handleSubmitReview}
                 handleClose={handleCloseReviewModal}
             />
