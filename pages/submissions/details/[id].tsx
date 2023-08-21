@@ -25,17 +25,28 @@ const SubmissionDetails = () => {
     const { getDownloadUrl } = useS3Url()
     const { updateSubmission } = useUpdateSubmission()
 
-    useEffect(() => {
+    const handleGetVideoUrl = async (): Promise<void> => {
         if (content?.video == null) {
             return
         }
-        getDownloadUrl(content.video).then((url) => {
-            if (url == '') {
-                toast.error('Failed to load video from S3')
-                return
+
+        try {
+            const url = await getDownloadUrl(content.video)
+            if (url === '') {
+                throw new Error()
             }
             setVideoUrl(url)
-        })
+        } catch {
+            toast.error('Cannot load video from cloud store')
+        }
+    }
+
+    useEffect(() => {
+        if (content == null) {
+            return
+        }
+
+        handleGetVideoUrl()
     }, [content])
 
     useEffect(() => {

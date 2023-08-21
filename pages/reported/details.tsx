@@ -67,12 +67,16 @@ const ReportDetails = () => {
             return
         }
 
-        const url = await getDownloadUrl(postDetails.video)
-        if (url == '') {
-            toast.error('Failed to load video from S3')
-            return
+        try {
+            const url = await getDownloadUrl(postDetails.video)
+            if (url == '') {
+                toast.error('Failed to load video from S3')
+                return
+            }
+            setVideoUrl(url)
+        } catch {
+            toast.error('Cannot load video from cloud store')
         }
-        setVideoUrl(url)
     }
 
     useEffect(() => {
