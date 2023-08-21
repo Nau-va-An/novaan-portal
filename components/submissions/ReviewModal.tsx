@@ -34,6 +34,14 @@ const ReviewModal = ({
         Status[currentStatus] as any
     )
 
+    const requireAdminComment = useMemo(() => {
+        if (currentStatus === Status[Status.Rejected]) {
+            return false
+        }
+
+        return Status[selectedStatus] === Status[Status.Rejected]
+    }, [currentStatus, selectedStatus])
+
     const availableStatus = useMemo(() => {
         if ((Status[currentStatus] as any) === Status.Pending) {
             setSelectedStatus(Status.Approved)
@@ -64,7 +72,7 @@ const ReviewModal = ({
     }, [selectedStatus])
 
     const resetState = () => {
-        setSelectedStatus(currentStatus)
+        setSelectedStatus(Status[currentStatus] as any)
         resetField('message')
         clearErrors()
     }
@@ -143,8 +151,7 @@ const ReviewModal = ({
                                     )
                                 })}
                             </RadioGroup>
-                            {Status[selectedStatus] ===
-                                Status[Status.Rejected] && (
+                            {requireAdminComment && (
                                 <div className="mt-4">
                                     <div className="text-lg">
                                         Rejected message
@@ -164,7 +171,7 @@ const ReviewModal = ({
                                         {errors.message?.type ===
                                             'required' && (
                                             <ErrText>
-                                                {COMMON_EMPTY_FIELD_NOT_ALLOWED}
+                                                *This field is required
                                             </ErrText>
                                         )}
                                         {errors.message?.type ===
@@ -189,7 +196,7 @@ const ReviewModal = ({
                                 data-modal-hide="defaultModal"
                                 type="button"
                                 className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10"
-                                onClick={handleClose}
+                                onClick={handleCloseReview}
                             >
                                 Cancel
                             </button>

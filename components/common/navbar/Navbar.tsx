@@ -1,20 +1,5 @@
-import { Status } from '@/pages/submissions/types/submission'
-import {
-    AppBar,
-    Box,
-    Container,
-    IconButton,
-    Menu,
-    MenuItem,
-    Typography,
-} from '@mui/material'
+import { AppBar } from '@mui/material'
 import { useRouter } from 'next/router'
-import {
-    NAVBAR_HISTORY,
-    NAVBAR_LOGOUT,
-    NAVBAR_PENDING,
-    NAVBAR_REPORTED,
-} from '../../../common/strings'
 import { useMemo } from 'react'
 import NavbarButton from './NavbarButton'
 import NavbarRouteButton, { NavbarItem } from './NavbarRouteButton'

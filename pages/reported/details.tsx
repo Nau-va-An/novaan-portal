@@ -20,7 +20,7 @@ import useS3Url from '@/common/hooks/useS3Url'
 import toast from 'react-hot-toast'
 
 const ReportDetails = () => {
-    const { isReady, query, back } = useRouter()
+    const router = useRouter()
 
     const { getRecipeDetails, getTipDetails } = usePostDetails()
     const { getDownloadUrl } = useS3Url()
@@ -35,62 +35,60 @@ const ReportDetails = () => {
     const [reviewOpen, setReviewOpen] = useState(false)
 
     useEffect(() => {
-        if (!isReady) {
-            return
-        }
-
-        if (query.content == null || query.contentType == null) {
+        if (router.query.content == null || router.query.contentType == null) {
             handleGoBack()
             return
         }
 
-        const contentType: TabValue = query.contentType as TabValue
-        const content: ReportedContent = JSON.parse(query.content as string)
+        const contentType: TabValue =
+            (router.query.contentType as TabValue) ?? 'Recipe'
+        const content: ReportedContent = JSON.parse(
+            router.query.content as string
+        )
 
         setReportedContent(content)
         setReportedContentType(contentType)
-    }, [isReady])
 
-    const fetchPostDetails = async (): Promise<void> => {
-        let postDetail: Recipe | CulinaryTip
-        if (reportedContentType === 'Recipe') {
-            postDetail = await getRecipeDetails(reportedContent.postId)
-        }
+        fetchPostDetails(content, contentType)
+    }, [router])
 
-        if (reportedContentType === 'CulinaryTip') {
-            postDetail = await getTipDetails(reportedContent.postId)
-        }
-
-        setPostDetails(postDetail)
-
-        if (postDetails?.video == null) {
-            return
-        }
-
+    const fetchPostDetails = async (
+        content: ReportedContent,
+        contentType: TabValue
+    ): Promise<void> => {
+        console.log(contentType, 'content type')
         try {
-            const url = await getDownloadUrl(postDetails.video)
-            if (url == '') {
-                toast.error('Failed to load video from S3')
+            let postDetail: Recipe | CulinaryTip
+            if (contentType === 'Recipe') {
+                postDetail = await getRecipeDetails(content.postId)
+            }
+
+            if (contentType === 'CulinaryTip') {
+                postDetail = await getTipDetails(content.postId)
+            }
+
+            if (postDetail?.video == null) {
                 return
             }
-            setVideoUrl(url)
+
+            try {
+                const url = await getDownloadUrl(postDetail.video)
+                if (url == '') {
+                    throw new Error()
+                }
+                setVideoUrl(url)
+                setPostDetails(postDetail)
+            } catch {
+                toast.error('Cannot load video from cloud store')
+            }
         } catch {
-            toast.error('Cannot load video from cloud store')
+            toast.error('Failed to load selected post')
+            router.back()
         }
     }
 
-    useEffect(() => {
-        if (!reportedContent || !reportedContentType) {
-            return
-        }
-        fetchPostDetails().catch(() => {
-            toast.error('Failed to load selected post')
-            back()
-        })
-    }, [reportedContent, reportedContentType])
-
     const handleGoBack = () => {
-        back()
+        router.back()
     }
 
     const isRecipe = useCallback(
@@ -115,12 +113,14 @@ const ReportDetails = () => {
             error: <b>Review failed. Please try again later</b>,
         })
 
-        back()
+        router.back()
     }
 
     if (postDetails == null) {
         return null
     }
+
+    console.log(videoUrl)
 
     return (
         <div className="mx-32 mt-8">
@@ -147,12 +147,12 @@ const ReportDetails = () => {
                     <div className="text-xl">3. Post details</div>
                 </div>
             </div>
-
             <div className="flex items-center justify-center">
                 <ReactPlayer
                     className="w-auto h-auto aspect-auto"
                     url={videoUrl}
                     controls={true}
+                    onError={console.log}
                 />
             </div>
             <div>
