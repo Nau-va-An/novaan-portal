@@ -12,6 +12,7 @@ import { Undefinable } from './types/types'
 import { getTokenPayload } from './utils/jwtoken'
 import { AuthToken } from './types/token.type'
 import moment from 'moment'
+import { toast } from 'react-hot-toast'
 
 // GLOBAL IN-MEMORY VARIABLE (DO NOT TOUCH)
 let tokenExpTimestamp: number = -1
@@ -198,7 +199,7 @@ export const useFetch = (config: RequestConfig) => {
         (error: Error) => {
             // Return to sign in page if unauthorized
             if (error instanceof UnauthorizedError) {
-                router.push('/auth/signin')
+                toast.error('Failed to load content. Unauthorized')
                 return true
             }
 

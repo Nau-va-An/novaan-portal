@@ -9,6 +9,7 @@ import { useCallback, useEffect, useState } from 'react'
 import useSwr from 'swr'
 import { ReportedContent } from './submission.type'
 import { Undefinable } from '@/common/types/types'
+import { PostComment } from '@/pages/reported/types/dto'
 
 export interface SubmissionsResponse {
     recipes: Recipe[]
@@ -140,4 +141,22 @@ export const usePostDetails = () => {
     }
 
     return { getRecipeDetails, getTipDetails }
+}
+
+export const useCommentDetails = () => {
+    const { getReq } = useFetch({ authorizationRequired: true, timeout: 5000 })
+
+    const getCommentDetails = async (
+        postId: string,
+        commentId: string
+    ): Promise<Undefinable<PostComment>> => {
+        const response = await getReq(`content/comments/${postId}/${commentId}`)
+        if (!responseObjectValid(response)) {
+            return undefined
+        }
+
+        return response
+    }
+
+    return { getCommentDetails }
 }
