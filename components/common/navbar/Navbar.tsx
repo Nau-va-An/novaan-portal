@@ -10,10 +10,7 @@ export type TabStatus = 'pending' | 'history' | 'reported'
 const Navbar = () => {
     const router = useRouter()
 
-    const isAtSignIn = useMemo(
-        () => router.pathname === '/auth/signin',
-        [router]
-    )
+    const isAtSignIn = useMemo(() => router.asPath === '/auth/signin', [router])
 
     const navbarItems: NavbarItem[] = useMemo(
         () => [
@@ -39,6 +36,10 @@ const Navbar = () => {
         // TODO: Send request to server to invalidate current valid token
         localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY)
         router.push('/auth/signin')
+    }
+
+    if (isAtSignIn) {
+        return null
     }
 
     return (
