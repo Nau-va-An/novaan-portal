@@ -58,7 +58,7 @@ export const RecipeInfoCard = ({ content }: RecipeLayoutProps) => {
             <div className="flex flex-col items-center justify-center">
                 <h2 className="text-xl">Portions</h2>
                 <p>
-                    {content.portionQuantity} {PortionType[content.portionType]}
+                    {content.portionQuantity} {content.portionType}
                 </p>
             </div>
             <div className="flex flex-col items-center justify-center">
