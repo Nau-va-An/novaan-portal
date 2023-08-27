@@ -22,6 +22,14 @@ interface InstructionProps {
     instructions: Instruction[]
 }
 
+const getPortionType = (portionType: string | number): string => {
+    if (isNaN(Number(portionType))) {
+        return portionType as string
+    }
+
+    return PortionType[portionType]
+}
+
 export const RecipeInfoCard = ({ content }: RecipeLayoutProps) => {
     const timeSpanToString = (timespan: string): string => {
         const duration = moment.duration(timespan)
@@ -58,7 +66,8 @@ export const RecipeInfoCard = ({ content }: RecipeLayoutProps) => {
             <div className="flex flex-col items-center justify-center">
                 <h2 className="text-xl">Portions</h2>
                 <p>
-                    {content.portionQuantity} {content.portionType}
+                    {content.portionQuantity}{' '}
+                    {getPortionType(content.portionType)}
                 </p>
             </div>
             <div className="flex flex-col items-center justify-center">
