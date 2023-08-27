@@ -54,8 +54,6 @@ const SubmissionDetails = () => {
             return
         }
 
-        console.log(isReady)
-
         // Get encoded content from query
         const newContent = JSON.parse(query.content as string)
         setContent(newContent)

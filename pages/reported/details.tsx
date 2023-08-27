@@ -56,7 +56,6 @@ const ReportDetails = () => {
         content: ReportedContent,
         contentType: TabValue
     ): Promise<void> => {
-        console.log(contentType, 'content type')
         try {
             let postDetail: Recipe | CulinaryTip
             if (contentType === 'Recipe') {
@@ -125,10 +124,8 @@ const ReportDetails = () => {
         return null
     }
 
-    console.log(videoUrl)
-
     return (
-        <div className="lg:mx-32 sm:mx-8 mt-8">
+        <div className="xl:mx-32 sm:mx-8 mt-8">
             <div
                 className="flex items-center justify-start text-cinfo cursor-pointer hover:underline"
                 onClick={handleGoBack}
