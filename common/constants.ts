@@ -1,4 +1,3 @@
-export const ACCESS_TOKEN_STORAGE_KEY = 'NOVAANN_ACCESS_TOKEN'
-
-export const DEFAULT_API_URL = 'http://localhost:8000/api/'
-export const DEFAULT_API_TIMEOUT = 10000
+export const ACCESS_TOKEN_STORAGE_KEY = process.env.NEXT_PUBLIC_AT_ID
+export const DEFAULT_API_URL = process.env.NEXT_PUBLIC_API_URL
+export const DEFAULT_API_TIMEOUT = process.env.NEXT_PUBLIC_API_TIMEOUT
