@@ -43,7 +43,7 @@ export const responseObjectValid = (target: any): boolean => {
 }
 
 const defaultConfig: RequestConfig = {
-    timeout: DEFAULT_API_TIMEOUT,
+    timeout: Number(DEFAULT_API_TIMEOUT),
     authorizationRequired: false,
 }
 
