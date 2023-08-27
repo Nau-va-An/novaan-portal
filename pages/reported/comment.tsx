@@ -64,7 +64,13 @@ const ReportedCommentDetails = () => {
         loadCommentDetails(content)
     }, [router])
 
-    const handleOpenReviewModal = () => {}
+    // TODO: Add dismiss report comment
+    const handleOpenReviewModal = () => {
+        toast(
+            'Sorry for the inconvenience\nThis feature is still in development...',
+            { icon: '🤧' }
+        )
+    }
 
     if (!comment || !reportedContent) {
         return null
