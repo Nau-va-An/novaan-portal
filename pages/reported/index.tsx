@@ -171,16 +171,10 @@ const ReportedSubmissionView = () => {
                                 </TableCell>
                             </TableRow>
                             <TableRow>
-                                <TableCell
-                                    className="w-12 text-ellipsis whitespace-nowrap"
-                                    align="center"
-                                >
+                                <TableCell className="w-12" align="center">
                                     User Id
                                 </TableCell>
-                                <TableCell
-                                    className="w-12 text-ellipsis whitespace-nowrap"
-                                    align="center"
-                                >
+                                <TableCell className="w-12" align="center">
                                     Username
                                 </TableCell>
                             </TableRow>
@@ -199,10 +193,16 @@ const ReportedSubmissionView = () => {
                                         <TableCell align="center">
                                             {contentType}
                                         </TableCell>
-                                        <TableCell align="left">
+                                        <TableCell
+                                            align="left"
+                                            className="whitespace-normal break-words"
+                                        >
                                             {content.userId}
                                         </TableCell>
-                                        <TableCell align="left">
+                                        <TableCell
+                                            align="left"
+                                            className="whitespace-normal break-words"
+                                        >
                                             {content.username}
                                         </TableCell>
                                         <TableCell className="whitespace-normal break-words">
