@@ -195,6 +195,8 @@ const ReportDetails = () => {
             <ReviewModal
                 isOpen={reviewOpen}
                 currentStatus={post.status}
+                allowPending={false}
+                allowDuplicate={true}
                 handleSubmit={handleSubmitReview}
                 handleClose={handleCloseReviewModal}
             />

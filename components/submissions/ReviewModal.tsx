@@ -16,6 +16,8 @@ import ErrText from '../common/ErrText'
 interface ReviewModalProps {
     isOpen: boolean
     currentStatus: Status
+    allowPending?: boolean
+    allowDuplicate?: boolean
     handleClose: () => void
     handleSubmit: (status: Status, message?: string) => void
 }
@@ -27,6 +29,8 @@ interface ReviewModalForm {
 const ReviewModal = ({
     isOpen,
     currentStatus,
+    allowPending = true,
+    allowDuplicate = false,
     handleClose,
     handleSubmit,
 }: ReviewModalProps) => {
@@ -35,7 +39,7 @@ const ReviewModal = ({
     )
 
     const requireAdminComment = useMemo(() => {
-        if (currentStatus === Status[Status.Rejected]) {
+        if ((currentStatus as any) === Status[Status.Rejected]) {
             return false
         }
 
@@ -47,9 +51,13 @@ const ReviewModal = ({
             setSelectedStatus(Status.Approved)
             return [Status.Approved, Status.Rejected]
         } else {
-            return [Status.Pending, Status.Approved, Status.Rejected]
+            if (allowPending) {
+                return [Status.Pending, Status.Approved, Status.Rejected]
+            }
+
+            return [Status.Approved, Status.Rejected]
         }
-    }, [currentStatus])
+    }, [currentStatus, allowPending])
 
     const {
         register,
@@ -90,7 +98,10 @@ const ReviewModal = ({
     }
 
     const handleReviewSubmit = (data: ReviewModalForm) => {
-        if ((Status[currentStatus] as any) === selectedStatus) {
+        if (
+            !allowDuplicate &&
+            (Status[currentStatus] as any) === selectedStatus
+        ) {
             toast.error('Cannot use the same status')
             handleCloseReview()
             return
