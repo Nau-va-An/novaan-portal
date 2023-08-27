@@ -64,14 +64,20 @@ const ReportedCommentDetails = () => {
         loadCommentDetails(content)
     }, [router])
 
-    const handleOpenReviewModal = () => {}
+    // TODO: Add dismiss report comment
+    const handleOpenReviewModal = () => {
+        toast(
+            'Sorry for the inconvenience\nThis feature is still in development...',
+            { icon: '🤧' }
+        )
+    }
 
     if (!comment || !reportedContent) {
         return null
     }
 
     return (
-        <div className="mx-32 mt-8">
+        <div className="mx-8 xl:mx-32 mt-8">
             <div
                 className="flex items-center justify-start text-cinfo cursor-pointer hover:underline"
                 onClick={handleGoBack}
@@ -79,18 +85,18 @@ const ReportedCommentDetails = () => {
                 <ArrowBackIcon className="mr-2" />
                 <h1 className="text-2xl">Reports</h1>
             </div>
-            <div className="mt-6 flex flex-row w-full">
-                <div className="w-1/3">
+            <div className="mt-6 flex flex-col xl:flex-row w-full">
+                <div className="w-full xl:w-1/3">
                     <div className="text-xl font-semibold">
                         1. Report details
                     </div>
                     <div className="grid grid-cols-2">
                         <div className="col-span-1">User Id</div>
-                        <div className="col-span-1">
+                        <div className="col-span-1 whitespace-normal break-words">
                             {reportedContent.userId}
                         </div>
                         <div className="col-span-1">Username</div>
-                        <div className="col-span-1">
+                        <div className="col-span-1 whitespace-normal break-words">
                             {reportedContent.username}
                         </div>
                     </div>
@@ -98,7 +104,7 @@ const ReportedCommentDetails = () => {
                         <div className="text-xl">2. Report reason</div>
                         <div>{reportedContent.reason}</div>
                     </div>
-                    <div className="flex mt-8">
+                    <div className="hidden mt-8 xl:flex">
                         <button
                             type="button"
                             className="px-4 py-2 bg-cprimary-300 hover:bg-cprimary-400 text-white rounded-lg"
@@ -108,7 +114,7 @@ const ReportedCommentDetails = () => {
                         </button>
                     </div>
                 </div>
-                <div className="ml-8">
+                <div className="mt-8 ml-0 xl:mt-0 xl:ml-8">
                     <h1 className="text-xl font-semibold">Reported comment:</h1>
                     <h2 className="text-lg">Text: {comment.comment}</h2>
                     <h2 className="text-lg mt-6">Image:</h2>
@@ -119,6 +125,15 @@ const ReportedCommentDetails = () => {
                         alt="comment image"
                     />
                 </div>
+            </div>
+            <div className="flex justify-center items-center my-4 xl:hidden">
+                <button
+                    type="button"
+                    className="px-4 py-2 bg-cprimary-300 hover:bg-cprimary-400 text-white rounded-lg"
+                    onClick={handleOpenReviewModal}
+                >
+                    Submit review
+                </button>
             </div>
         </div>
     )

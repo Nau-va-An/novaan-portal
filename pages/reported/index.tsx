@@ -151,7 +151,7 @@ const ReportedSubmissionView = () => {
             </Box>
             {currentContent && currentContent.length > 0 ? (
                 <TableContainer component={Paper} className="mx-auto mt-2">
-                    <Table size="small" stickyHeader className="table-fixed">
+                    <Table size="small" stickyHeader>
                         <TableHead>
                             <TableRow>
                                 <TableCell align="center" rowSpan={2}>
@@ -171,16 +171,10 @@ const ReportedSubmissionView = () => {
                                 </TableCell>
                             </TableRow>
                             <TableRow>
-                                <TableCell
-                                    className="w-12 text-ellipsis whitespace-nowrap"
-                                    align="center"
-                                >
+                                <TableCell className="w-12" align="center">
                                     User Id
                                 </TableCell>
-                                <TableCell
-                                    className="w-12 text-ellipsis whitespace-nowrap"
-                                    align="center"
-                                >
+                                <TableCell className="w-12" align="center">
                                     Username
                                 </TableCell>
                             </TableRow>
@@ -199,10 +193,16 @@ const ReportedSubmissionView = () => {
                                         <TableCell align="center">
                                             {contentType}
                                         </TableCell>
-                                        <TableCell align="left">
+                                        <TableCell
+                                            align="left"
+                                            className="whitespace-normal break-words"
+                                        >
                                             {content.userId}
                                         </TableCell>
-                                        <TableCell align="left">
+                                        <TableCell
+                                            align="left"
+                                            className="whitespace-normal break-words"
+                                        >
                                             {content.username}
                                         </TableCell>
                                         <TableCell className="whitespace-normal break-words">
