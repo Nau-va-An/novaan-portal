@@ -3,21 +3,23 @@ import {
     RecipeGuideSection,
 } from '@/components/submissions/RecipeLayout'
 import ReviewModal from '@/components/submissions/ReviewModal'
-import { content } from '@/tailwind.config'
-import { capitalize } from 'lodash'
 import { useCallback, useEffect, useState } from 'react'
 import ReactPlayer from 'react-player'
-import { Recipe, CulinaryTip, Status } from '../submissions/types/submission'
-import {
-    usePostDetails,
-    useUpdateSubmission,
-} from '../submissions/services/submissions.service'
 import { useRouter } from 'next/router'
 import { TabValue } from '.'
-import { ReportedContent } from '../submissions/services/submission.type'
+import {
+    CulinaryTip,
+    Recipe,
+    ReportedContent,
+    Status,
+} from '../../services/submission/types/submission.type'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import useS3Url from '@/common/hooks/useS3Url'
 import toast from 'react-hot-toast'
+import {
+    usePostDetails,
+    useUpdateSubmission,
+} from '@/services/submission/submissions.service'
 
 const ReportDetails = () => {
     const router = useRouter()

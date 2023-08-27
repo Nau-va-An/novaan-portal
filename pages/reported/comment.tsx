@@ -1,13 +1,12 @@
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import { TabValue } from '.'
-import { ReportedContent } from '../submissions/services/submission.type'
-import { PostComment } from './types/dto'
-import useS3Url from '@/common/hooks/useS3Url'
-import { useCommentDetails } from '../submissions/services/submissions.service'
+import { ReportedContent } from '../../services/submission/types/submission.type'
+import { PostComment } from '../../services/report/types/dto'
 import { toast } from 'react-hot-toast'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import Image from 'next/image'
+import { useCommentDetails } from '@/services/submission/submissions.service'
+import useS3Url from '@/common/hooks/useS3Url'
 
 const ReportedCommentDetails = () => {
     const router = useRouter()

@@ -3,13 +3,13 @@ import {
     Recipe,
     Status,
     SubmissionType,
-} from '@/pages/submissions/types/submission'
+} from '@/services/submission/types/submission.type'
 import { responseObjectValid, useFetch } from '@/common/baseApi'
 import { useCallback, useEffect, useState } from 'react'
 import useSwr from 'swr'
-import { ReportedContent } from './submission.type'
+import { ReportedContent } from './types/submission.type'
 import { Undefinable } from '@/common/types/types'
-import { PostComment } from '@/pages/reported/types/dto'
+import { PostComment } from '@/services/report/types/dto'
 
 export interface SubmissionsResponse {
     recipes: Recipe[]

@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { CulinaryTip, Recipe, SubmissionType } from './types/submission'
-import { useFetchSubmissions } from './services/submissions.service'
 import { capitalize } from 'lodash'
 import {
     Paper,
@@ -20,10 +18,15 @@ import { customColors } from '@/tailwind.config'
 import { EMPTY_HISTORY_RECIPE, EMPTY_HISTORY_TIPS } from '@/common/strings'
 import InventoryOutlinedIcon from '@mui/icons-material/InventoryOutlined'
 import HistoryOutlinedIcon from '@mui/icons-material/HistoryOutlined'
-import FlagOutlinedIcon from '@mui/icons-material/FlagOutlined'
 import EmptyContent from '@/components/submissions/EmptyContent'
 import { TabStatus } from '@/components/common/navbar/Navbar'
 import moment from 'moment'
+import { useFetchSubmissions } from '@/services/submission/submissions.service'
+import {
+    SubmissionType,
+    Recipe,
+    CulinaryTip,
+} from '@/services/submission/types/submission.type'
 
 const TabsInfo: {
     label: string

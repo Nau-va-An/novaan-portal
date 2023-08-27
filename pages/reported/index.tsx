@@ -1,10 +1,5 @@
-import {
-    COMMENT_TITLE,
-    EMPTY_REPORT,
-    RECIPE_TITLE,
-    TIPS_TITLE,
-} from '@/common/strings'
-import { content, customColors } from '@/tailwind.config'
+import { EMPTY_REPORT } from '@/common/strings'
+import { customColors } from '@/tailwind.config'
 import {
     Box,
     Tabs,
@@ -18,14 +13,12 @@ import {
     TableRow,
     colors,
 } from '@mui/material'
-import { capitalize } from 'lodash'
 import React, { useEffect, useMemo, useState } from 'react'
-import style from 'styled-jsx/style'
-import { useReportedContent } from '../submissions/services/submissions.service'
 import EmptyContent from '@/components/submissions/EmptyContent'
 import FlagOutlinedIcon from '@mui/icons-material/FlagOutlined'
-import { ReportedContent } from '../submissions/services/submission.type'
+import { ReportedContent } from '../../services/submission/types/submission.type'
 import { useRouter } from 'next/router'
+import { useReportedContent } from '@/services/submission/submissions.service'
 
 export type TabValue = 'Recipe' | 'CulinaryTip' | 'Comments'
 

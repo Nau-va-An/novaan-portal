@@ -2,16 +2,14 @@ import { useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { capitalize } from 'lodash'
 import toast from 'react-hot-toast'
-
-import { Status } from '@/pages/submissions/types/submission'
 import {
-    COMMON_EMPTY_FIELD_NOT_ALLOWED,
     REVIEW_MESSAGE_TOO_LONG,
     REVIEW_MESSAGE_TOO_SHORT,
 } from '@/common/strings'
 
 import { FormControlLabel, Modal, Radio, RadioGroup } from '@mui/material'
 import ErrText from '../common/ErrText'
+import { Status } from '@/services/submission/types/submission.type'
 
 interface ReviewModalProps {
     isOpen: boolean

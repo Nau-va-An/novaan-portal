@@ -1,7 +1,5 @@
 import router, { useRouter } from 'next/router'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { CulinaryTip, Recipe, Status } from '../types/submission'
-import { capitalize } from 'lodash'
 import ReactPlayer from 'react-player'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import {
@@ -10,9 +8,13 @@ import {
 } from '@/components/submissions/RecipeLayout'
 import ReviewModal from '@/components/submissions/ReviewModal'
 import useS3Url from '@/common/hooks/useS3Url'
-import Image from 'next/image'
-import { useUpdateSubmission } from '../services/submissions.service'
 import toast from 'react-hot-toast'
+import { useUpdateSubmission } from '@/services/submission/submissions.service'
+import {
+    Recipe,
+    CulinaryTip,
+    Status,
+} from '@/services/submission/types/submission.type'
 
 const SubmissionDetails = () => {
     const { query, isReady } = useRouter()

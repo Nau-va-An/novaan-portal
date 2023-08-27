@@ -1,14 +1,14 @@
-import {
-    Ingredient,
-    Instruction,
-    PortionType,
-    Recipe,
-} from '@/pages/submissions/types/submission'
 import moment from 'moment'
-import { Fragment, useCallback, useEffect, useMemo, useState } from 'react'
+import { Fragment, useEffect, useMemo, useState } from 'react'
 import Image from 'next/image'
 import useS3Url from '@/common/hooks/useS3Url'
 import { toast } from 'react-hot-toast'
+import {
+    Recipe,
+    Ingredient,
+    Instruction,
+    PortionType,
+} from '@/services/submission/types/submission.type'
 
 interface RecipeLayoutProps {
     content: Recipe
