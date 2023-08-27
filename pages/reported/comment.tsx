@@ -71,7 +71,7 @@ const ReportedCommentDetails = () => {
     }
 
     return (
-        <div className="sm:mx-8 xl:mx-32 mt-8">
+        <div className="mx-8 xl:mx-32 mt-8">
             <div
                 className="flex items-center justify-start text-cinfo cursor-pointer hover:underline"
                 onClick={handleGoBack}
@@ -79,8 +79,8 @@ const ReportedCommentDetails = () => {
                 <ArrowBackIcon className="mr-2" />
                 <h1 className="text-2xl">Reports</h1>
             </div>
-            <div className="mt-6 flex sm:flex-col xl:flex-row w-full">
-                <div className="sm:w-full xl:w-1/3">
+            <div className="mt-6 flex flex-col xl:flex-row w-full">
+                <div className="w-full xl:w-1/3">
                     <div className="text-xl font-semibold">
                         1. Report details
                     </div>
@@ -98,7 +98,7 @@ const ReportedCommentDetails = () => {
                         <div className="text-xl">2. Report reason</div>
                         <div>{reportedContent.reason}</div>
                     </div>
-                    <div className="flex mt-8 sm:hidden xl:block">
+                    <div className="hidden mt-8 xl:flex">
                         <button
                             type="button"
                             className="px-4 py-2 bg-cprimary-300 hover:bg-cprimary-400 text-white rounded-lg"
@@ -108,7 +108,7 @@ const ReportedCommentDetails = () => {
                         </button>
                     </div>
                 </div>
-                <div className="sm:mt-8 xl:mt-0 sm:ml-0 xl:ml-8">
+                <div className="mt-8 ml-0 xl:mt-0 xl:ml-8">
                     <h1 className="text-xl font-semibold">Reported comment:</h1>
                     <h2 className="text-lg">Text: {comment.comment}</h2>
                     <h2 className="text-lg mt-6">Image:</h2>
@@ -120,7 +120,7 @@ const ReportedCommentDetails = () => {
                     />
                 </div>
             </div>
-            <div className="justify-center items-center my-4 sm:flex xl:hidden">
+            <div className="flex justify-center items-center my-4 xl:hidden">
                 <button
                     type="button"
                     className="px-4 py-2 bg-cprimary-300 hover:bg-cprimary-400 text-white rounded-lg"

@@ -151,7 +151,7 @@ const ReportedSubmissionView = () => {
             </Box>
             {currentContent && currentContent.length > 0 ? (
                 <TableContainer component={Paper} className="mx-auto mt-2">
-                    <Table size="small" stickyHeader className="table-fixed">
+                    <Table size="small" stickyHeader>
                         <TableHead>
                             <TableRow>
                                 <TableCell align="center" rowSpan={2}>

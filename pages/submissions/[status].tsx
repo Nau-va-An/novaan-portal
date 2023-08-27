@@ -120,7 +120,7 @@ const SubmissionsView = () => {
             </Box>
             {content && content.length > 0 && (
                 <TableContainer component={Paper} className="mx-auto mt-2">
-                    <Table size="small">
+                    <Table size="small" stickyHeader>
                         <TableHead>
                             <TableRow>
                                 <TableCell align="center">No.</TableCell>

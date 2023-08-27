@@ -125,7 +125,7 @@ const ReportDetails = () => {
     }
 
     return (
-        <div className="xl:mx-32 sm:mx-8 mt-8">
+        <div className="mx-8 xl:mx-32 mt-8">
             <div
                 className="flex items-center justify-start text-cinfo cursor-pointer hover:underline"
                 onClick={handleGoBack}
@@ -135,7 +135,7 @@ const ReportDetails = () => {
             </div>
             <div className="mt-6">
                 <div className="text-xl font-normal">1. Report details</div>
-                <div className="grid grid-cols-2 sm:w-full xl:w-1/5">
+                <div className="grid grid-cols-2 w-full xl:w-1/5">
                     <div className="col-span-1">User Id</div>
                     <div className="col-span-1">{reportedContent.userId}</div>
                     <div className="col-span-1">Username</div>
