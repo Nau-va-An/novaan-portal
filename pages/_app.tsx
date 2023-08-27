@@ -1,4 +1,3 @@
-import ErrorBoundary from '@/common/components/error'
 import { Inter } from 'next/font/google'
 
 import '@/styles/globals.css'
